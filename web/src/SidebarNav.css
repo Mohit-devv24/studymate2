@@ -1,0 +1,393 @@
+:root {
+  --app-sidebar-width: 220px;
+  --app-sidebar-bg: #f0eee5;
+  --app-sidebar-paper: #ffffff;
+  --app-sidebar-ink: #171613;
+  --app-sidebar-muted: #66635c;
+  --app-sidebar-soft: #e7e3da;
+  --app-sidebar-line: #d8d5cc;
+  --app-sidebar-accent: #b97843;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================
+   SHARED SIDEBAR
+========================= */
+
+.app-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: var(--app-sidebar-width);
+  min-width: var(--app-sidebar-width);
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 22px 14px;
+
+  background: var(--app-sidebar-bg);
+  color: var(--app-sidebar-ink);
+
+  border-right: 1px solid var(--app-sidebar-line);
+
+  z-index: 9999;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* =========================
+   BRAND
+========================= */
+
+.app-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 4px 8px 17px;
+
+  min-height: 42px;
+  flex-shrink: 0;
+}
+
+.app-sidebar-brand-mark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: #171613;
+  color: #f0eee5;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.app-sidebar-brand-text {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar-brand-text strong {
+  font-size: 15px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.app-sidebar-brand-text span {
+  margin-top: 4px;
+
+  color: #858178;
+
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+
+.app-sidebar-divider {
+  width: 100%;
+  height: 1px;
+
+  background: var(--app-sidebar-line);
+
+  margin-bottom: 13px;
+
+  flex-shrink: 0;
+}
+
+/* =========================
+   NAV
+========================= */
+
+.app-sidebar-nav {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.app-sidebar-item {
+  width: 100%;
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 11px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  background: transparent;
+  color: var(--app-sidebar-muted);
+
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.app-sidebar-item:hover {
+  background: var(--app-sidebar-soft);
+  color: var(--app-sidebar-ink);
+}
+
+.app-sidebar-item.active {
+  background: var(--app-sidebar-paper);
+  color: var(--app-sidebar-ink);
+
+  border-color: #dedbd2;
+
+  box-shadow: 0 4px 12px rgba(35, 38, 50, 0.05);
+}
+
+.app-sidebar-item-icon {
+  width: 18px;
+  flex: 0 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--app-sidebar-accent);
+
+  font-size: 13px;
+  line-height: 1;
+}
+
+.app-sidebar-item.active .app-sidebar-item-icon {
+  color: var(--app-sidebar-ink);
+}
+
+.app-sidebar-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   USER
+========================= */
+
+.app-sidebar-bottom {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 14px;
+
+  flex-shrink: 0;
+}
+
+.app-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 3px;
+
+  border-top: 1px solid var(--app-sidebar-line);
+  border-bottom: 1px solid var(--app-sidebar-line);
+}
+
+.app-sidebar-avatar {
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: var(--app-sidebar-paper);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.app-sidebar-user-copy {
+  min-width: 0;
+}
+
+.app-sidebar-user-copy strong {
+  display: block;
+
+  max-width: 135px;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  font-size: 11px;
+}
+
+.app-sidebar-user-copy small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8a867d;
+
+  font-size: 9px;
+}
+
+/* =========================
+   LOGOUT
+========================= */
+
+.app-sidebar-logout {
+  width: 100%;
+  min-height: 38px;
+
+  margin-top: 10px;
+  padding: 9px 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 1px solid var(--app-sidebar-line);
+  border-radius: 9px;
+
+  background: transparent;
+  color: #6e6a62;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.app-sidebar-logout:hover {
+  background: #e6e1d7;
+  color: var(--app-sidebar-ink);
+  border-color: #c9c5bb;
+}
+
+/* =========================
+   ALL APP MAIN CONTENT
+========================= */
+
+.dashboard-main,
+.subjects-main,
+.tasks-main,
+.notes-main,
+.timer-main,
+.planner-main,
+.feature-main {
+  width: calc(100% - var(--app-sidebar-width)) !important;
+
+  margin-left: var(--app-sidebar-width) !important;
+
+  min-height: 100vh;
+
+  box-sizing: border-box;
+}
+
+/* =========================
+   OLD SIDEBARS HIDDEN
+========================= */
+
+.dashboard-sidebar,
+.subjects-sidebar,
+.dashboard .sidebar,
+.subjects-page .sidebar,
+.tasks-page .sidebar,
+.notes-page .sidebar,
+.timer-page .sidebar,
+.planner-page .planner-sidebar {
+  display: none !important;
+}
+
+/* Old navigation systems */
+.dashboard .sidebar-nav,
+.subjects-page .sidebar-nav,
+.tasks-page .sidebar-nav,
+.notes-page .sidebar-nav,
+.timer-page .sidebar-nav,
+.planner-page .planner-nav {
+  display: none !important;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 760px) {
+  .app-sidebar {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+    height: auto;
+
+    padding: 14px;
+
+    border-right: 0;
+    border-bottom: 1px solid var(--app-sidebar-line);
+
+    overflow: visible;
+  }
+
+  .app-sidebar-nav {
+    display: grid;
+
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+    gap: 5px;
+  }
+
+  .app-sidebar-bottom {
+    margin-top: 12px;
+  }
+
+  .dashboard-main,
+  .subjects-main,
+  .tasks-main,
+  .notes-main,
+  .timer-main,
+  .planner-main,
+  .feature-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}

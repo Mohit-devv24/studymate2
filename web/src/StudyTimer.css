@@ -1,0 +1,457 @@
+
+/* =========================================================
+   STUDYMATE — STUDY TIMER PAGE
+   Dedicated styles. Existing index.css can remain untouched.
+   ========================================================= */
+
+.timer-page .timer-main {
+  padding-bottom: 60px;
+}
+
+.timer-page .dashboard-header {
+  margin-bottom: 28px;
+}
+
+.timer-page .small-label {
+  color: #6558e8;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin: 0 0 8px;
+}
+
+.timer-page .dashboard-header h1 {
+  margin: 0 0 8px;
+  color: #202535;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.timer-page .header-subtitle {
+  margin: 0;
+  color: #8b92a1;
+  font-size: 13px;
+}
+
+.study-timer-card {
+  width: min(760px, calc(100vw - 310px));
+  margin: 10px auto 0;
+  padding: 34px 42px 30px;
+  box-sizing: border-box;
+  border: 1px solid #e7e8ef;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 50px rgba(35, 40, 65, 0.08);
+  text-align: center;
+}
+
+.timer-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.timer-title span {
+  color: #6b5cf4;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.timer-title h2 {
+  margin: 0;
+  color: #202535;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.big-timer {
+  margin: 24px 0 20px;
+  color: #202535;
+  font-size: 76px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-adjust-buttons,
+.timer-presets,
+.timer-main-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.timer-adjust {
+  height: 40px;
+  padding: 0 17px;
+  border: 1px solid #e2e4eb;
+  border-radius: 11px;
+  background: #fff;
+  color: #555d6e;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.timer-adjust:hover:not(:disabled) {
+  border-color: #bdb5ff;
+  color: #5d50d6;
+  background: #faf9ff;
+  transform: translateY(-1px);
+}
+
+.timer-adjust:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.timer-presets {
+  margin-top: 14px;
+}
+
+.timer-presets button {
+  min-width: 70px;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid #e7e8ef;
+  border-radius: 10px;
+  background: #f7f8fb;
+  color: #626a7b;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.timer-presets button:hover {
+  border-color: #d4cffc;
+  background: #f0eeff;
+  color: #5d50d6;
+}
+
+.timer-main-buttons {
+  margin-top: 18px;
+}
+
+.timer-page .timer-start,
+.timer-page .timer-reset {
+  height: 42px;
+  min-height: 42px;
+  padding: 0 25px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.timer-page .timer-start {
+  border: 0;
+  background: linear-gradient(135deg, #7161ff, #5748e8);
+  color: #fff;
+  box-shadow: 0 9px 22px rgba(100, 86, 236, .22);
+}
+
+.timer-page .timer-start:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 27px rgba(100, 86, 236, .28);
+}
+
+.timer-page .timer-reset {
+  border: 1px solid #e3e5ec;
+  background: #fff;
+  color: #596173;
+}
+
+.timer-page .timer-reset:hover {
+  border-color: #cbc7f5;
+  background: #fafaff;
+}
+
+/* Wallpaper picker */
+
+.wallpaper-section {
+  margin-top: 27px;
+  padding-top: 22px;
+  border-top: 1px solid #eceef3;
+  text-align: left;
+}
+
+.wallpaper-heading {
+  margin-bottom: 13px;
+}
+
+.wallpaper-heading h3 {
+  margin: 0 0 4px;
+  color: #252a3a;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.wallpaper-heading p {
+  margin: 0;
+  color: #9aa1ae;
+  font-size: 11px;
+}
+
+.wallpaper-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wallpaper-option {
+  position: relative;
+  min-height: 66px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 13px;
+  background-size: cover !important;
+  background-position: center !important;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 5px 16px rgba(30, 35, 55, .10);
+  transition: .2s ease;
+}
+
+.wallpaper-option::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.04));
+}
+
+.wallpaper-option span {
+  position: absolute;
+  left: 10px;
+  bottom: 9px;
+  z-index: 2;
+  font-size: 10px;
+  font-weight: 800;
+  text-shadow: 0 1px 5px rgba(0,0,0,.35);
+}
+
+.wallpaper-option b {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #5d50d6;
+  font-size: 11px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.18);
+}
+
+.wallpaper-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 20px rgba(30,35,55,.15);
+}
+
+.wallpaper-option.selected {
+  border-color: #7566ff;
+  box-shadow: 0 0 0 2px rgba(117,102,255,.12),
+              0 9px 20px rgba(30,35,55,.14);
+}
+
+.custom-wallpaper {
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.wallpaper-upload {
+  position: relative;
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-sizing: border-box;
+  border: 1.5px dashed #cfd2dc;
+  border-radius: 13px;
+  background: #fafbfe;
+  color: #697184;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.wallpaper-upload:hover {
+  border-color: #8e82ff;
+  background: #f8f7ff;
+  color: #5d50d6;
+}
+
+.wallpaper-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.upload-plus {
+  color: #6b5cf4;
+  font-size: 22px;
+  line-height: 20px;
+  font-weight: 300;
+}
+
+.wallpaper-upload strong {
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wallpaper-upload small {
+  color: #a0a6b2;
+  font-size: 8px;
+}
+
+/* Focus Mode */
+
+.focus-mode-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  isolation: isolate;
+}
+
+.focus-mode-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, .38);
+}
+
+.focus-mode-content {
+  width: min(900px, 90vw);
+  text-align: center;
+  color: #fff;
+}
+
+.focus-mode-label {
+  margin-bottom: 25px;
+  color: rgba(255,255,255,.75);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+
+.focus-mode-timer {
+  color: #fff;
+  font-size: clamp(90px, 15vw, 190px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 8px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 8px 35px rgba(0,0,0,.35);
+}
+
+.focus-mode-controls {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 45px;
+}
+
+.focus-pause-btn,
+.focus-exit-btn {
+  min-width: 130px;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.focus-pause-btn {
+  border: 0;
+  background: #fff;
+  color: #202535;
+  box-shadow: 0 8px 25px rgba(0,0,0,.2);
+}
+
+.focus-exit-btn {
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.10);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.focus-pause-btn:hover,
+.focus-exit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.focus-exit-btn:hover {
+  background: rgba(255,255,255,.18);
+}
+
+@media (max-width: 1000px) {
+  .study-timer-card {
+    width: min(760px, calc(100vw - 260px));
+  }
+
+  .wallpaper-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .timer-page .timer-main {
+    padding: 28px 18px 50px;
+  }
+
+  .study-timer-card {
+    width: 100%;
+    padding: 28px 20px 24px;
+  }
+
+  .big-timer {
+    font-size: 58px;
+  }
+
+  .wallpaper-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 460px) {
+  .wallpaper-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .timer-adjust {
+    padding: 0 12px;
+  }
+
+  .focus-mode-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .focus-pause-btn,
+  .focus-exit-btn {
+    width: 180px;
+  }
+}

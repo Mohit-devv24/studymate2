@@ -1,0 +1,217 @@
+* { box-sizing: border-box; }
+
+:root {
+  --app-sidebar-width: 220px;
+  --app-sidebar-bg: #f0eee5;
+  --app-sidebar-paper: #ffffff;
+  --app-sidebar-ink: #171613;
+  --app-sidebar-muted: #66635c;
+  --app-sidebar-soft: #e7e3da;
+  --app-sidebar-line: #d8d5cc;
+  --app-sidebar-accent: #b97843;
+}
+
+.app-sidebar {
+  width: var(--app-sidebar-width);
+  min-height: 100vh;
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 100;
+  padding: 27px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  background: var(--app-sidebar-bg);
+  color: var(--app-sidebar-ink);
+  border-right: 1px solid var(--app-sidebar-line);
+}
+
+.app-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.app-sidebar-logo {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--app-sidebar-ink);
+  background: var(--app-sidebar-paper);
+  font: 700 11px Georgia, "Times New Roman", serif;
+}
+
+.app-sidebar-brand strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.app-sidebar-brand span {
+  display: block;
+  margin-top: 4px;
+  color: #77736b;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .13em;
+}
+
+.app-sidebar-line {
+  height: 1px;
+  margin: 22px 0 20px;
+  background: var(--app-sidebar-line);
+}
+
+.app-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.app-sidebar-item {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 13px;
+  border-radius: 4px;
+  color: var(--app-sidebar-muted);
+  background: transparent;
+  text-decoration: none;
+  font: inherit;
+  font-size: 12px;
+  transition: .2s ease;
+  flex: 0 0 auto;
+}
+
+.app-sidebar-item:hover {
+  background: var(--app-sidebar-soft);
+  color: var(--app-sidebar-ink);
+}
+
+.app-sidebar-item.active {
+  background: var(--app-sidebar-paper);
+  color: var(--app-sidebar-ink);
+  box-shadow: 0 2px 8px rgba(35, 38, 50, .08);
+}
+
+.app-sidebar-icon {
+  width: 18px;
+  display: inline-flex;
+  justify-content: center;
+  flex: 0 0 18px;
+  color: var(--app-sidebar-accent);
+  font-size: 13px;
+}
+
+.app-sidebar-item.active .app-sidebar-icon {
+  color: var(--app-sidebar-ink);
+}
+
+.app-sidebar-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.app-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 3px;
+  border-top: 1px solid var(--app-sidebar-line);
+  border-bottom: 1px solid var(--app-sidebar-line);
+}
+
+.app-sidebar-avatar {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 31px;
+  border-radius: 50%;
+  background: var(--app-sidebar-paper);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.app-sidebar-user strong {
+  display: block;
+  max-width: 125px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+}
+
+.app-sidebar-user span {
+  display: block;
+  margin-top: 2px;
+  color: #77736b;
+  font-size: 9px;
+}
+
+.app-sidebar-logout {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 10px;
+  border: 0;
+  background: transparent;
+  color: #77736b;
+  text-align: left;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.app-sidebar-logout span {
+  margin-right: 8px;
+  color: var(--app-sidebar-accent);
+}
+
+/* The shared sidebar controls the horizontal offset everywhere. */
+.dashboard-main,
+.subjects-main,
+.tasks-main,
+.notes-main,
+.timer-main,
+.planner-main,
+.feature-main {
+  width: calc(100% - var(--app-sidebar-width)) !important;
+  margin-left: var(--app-sidebar-width) !important;
+}
+
+@media (max-width: 760px) {
+  .app-sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .app-sidebar-nav {
+    overflow: visible;
+  }
+
+  .dashboard,
+  .subjects-page,
+  .tasks-page,
+  .notes-page,
+  .timer-page,
+  .planner-page,
+  .feature-page {
+    display: block !important;
+  }
+
+  .dashboard-main,
+  .subjects-main,
+  .tasks-main,
+  .notes-main,
+  .timer-main,
+  .planner-main,
+  .feature-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
