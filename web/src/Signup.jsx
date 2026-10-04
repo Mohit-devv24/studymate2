@@ -18,16 +18,21 @@ export default function Signup() {
   const handleSignup = async (event) => {
     event.preventDefault();
     setMessage("");
+    
+if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+  setMessage("Please fill in all fields.");
+  return;
+}
 
-    if (!name.trim() || !email.trim() || !password || !confirmPassword) {
-      setMessage("Please fill in all fields.");
-      return;
-    }
+if (password.length < 8) {
+  alert("Please enter a password with at least 8 characters.");
+  return;
+}
 
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
-    }
+if (password !== confirmPassword) {
+  setMessage("Passwords do not match.");
+  return;
+}
 
     setLoading(true);
 
