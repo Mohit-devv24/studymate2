@@ -28,7 +28,7 @@ import Analytics from "./Analytics";
 
 import Habits from "./Habits";
 
-
+import SiteFooter from "./components/SiteFooter";
 
 
 
@@ -486,17 +486,7 @@ function Home() {
 
 
 
-      <footer className="home-footer">
-
-        <Link to="/" className="home-brand"><span className="home-brand-mark">SM</span><span>StudyMate</span></Link>
-
-        <span>Study smarter. Stay consistent.</span>
-
-        <span>© 2026 StudyMate</span>
-
-      </footer>
-
-
+    <SiteFooter />
 
       {activeQuote && (
 
