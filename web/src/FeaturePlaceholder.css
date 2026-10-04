@@ -27,7 +27,7 @@
   color: var(--feature-accent);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: .16em;
+  letter-spacing: 0.16em;
 }
 
 .feature-page h1 {
@@ -51,7 +51,7 @@
   padding: 28px;
   background: var(--feature-card);
   border: 1px solid var(--feature-line);
-  box-shadow: 8px 9px 0 rgba(23,23,20,.035);
+  box-shadow: 8px 9px 0 rgba(23, 23, 20, 0.035);
 }
 
 .feature-card span {
@@ -59,7 +59,7 @@
   color: var(--feature-accent);
   font-size: 9px;
   font-weight: 800;
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
 }
 
 .feature-card strong {
@@ -77,9 +77,52 @@
   font-size: 11px;
 }
 
+/* Fix shared feature pages after the Calendar section */
+.feature-app-main {
+  width: calc(100% - 220px);
+  margin-left: 220px;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 64px 7%;
+  max-width: none;
+}
+
+/* Prevent cards and forms from stretching outside the page */
+.feature-app-card,
+.feature-app-form,
+.feature-app-calendar,
+.feature-app-list,
+.feature-app-grid {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.feature-app-calendar {
+  min-width: 0;
+  overflow-x: auto;
+}
+
 @media (max-width: 760px) {
   .feature-page {
     margin-left: 0;
     padding: 32px 20px 50px;
+  }
+
+  .feature-app-main {
+    width: 100%;
+    margin-left: 0;
+    padding: 30px 18px;
+  }
+
+  .feature-app-form {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-app-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-app-calendar {
+    overflow-x: auto;
   }
 }
