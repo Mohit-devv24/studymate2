@@ -92,7 +92,34 @@ export async function loginUser(email, password) {
     );
   }
 
-  return response.data;
+  const data = response.data;
+
+  // Save JWT token after successful login
+  if (data.token) {
+    localStorage.setItem("authToken", data.token);
+  }
+
+  // Save basic user information
+  if (data.id) {
+    localStorage.setItem("userId", String(data.id));
+  }
+
+  if (data.name) {
+    localStorage.setItem("userName", data.name);
+  }
+
+  if (data.email) {
+    localStorage.setItem("userEmail", data.email);
+  }
+
+  return data;
+}
+
+export function logoutUser() {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
 }
 
 export { API_URL };
