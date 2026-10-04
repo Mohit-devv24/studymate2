@@ -1,0 +1,125 @@
+.site-footer {
+  width: 100%;
+  background: #0b0f18;
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.site-footer-inner {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  padding: 55px 0 45px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 50px;
+  align-items: start;
+}
+
+.site-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.site-footer-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #b97843;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.site-footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.site-footer-brand-text strong {
+  font-size: 16px;
+}
+
+.site-footer-brand-text small {
+  color: #777f91;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.site-footer-brand > p {
+  margin: 18px 0 0;
+  color: #7d8595;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.site-footer-label {
+  display: block;
+  margin-bottom: 14px;
+  color: #777f91;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+}
+
+.site-footer-about strong {
+  display: block;
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+
+.site-footer-role {
+  display: block;
+  color: #7d8595;
+  font-size: 12px;
+}
+
+.site-footer-socials {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.site-footer-socials a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.site-footer-socials a:hover {
+  color: #b97843;
+  transform: translateX(3px);
+}
+
+.site-footer-bottom {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+  padding: 18px 0 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #626a7b;
+  font-size: 10px;
+}
+
+@media (max-width: 700px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px 0;
+  }
+
+  .site-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
