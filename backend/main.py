@@ -1861,19 +1861,26 @@ def api_generate_game(
     recent_hashes = [r[0] for r in recent_qs if r[0]]
 
     # 3. Generate challenges using Groq AI Engine
-    content = generate_course_aware_game_content(
-        game_type=data.game_type,
-        course_category=category,
-        course_name=course_name,
-        branch_or_stream=branch_or_stream,
-        class_or_semester=class_or_semester,
-        subject=subject,
-        chapter=chapter,
-        topic=topic,
-        difficulty=difficulty,
-        question_count=q_count,
-        recent_hashes=recent_hashes,
-    )
+    try:
+        content = generate_course_aware_game_content(
+            game_type=data.game_type,
+            course_category=category,
+            course_name=course_name,
+            branch_or_stream=branch_or_stream,
+            class_or_semester=class_or_semester,
+            subject=subject,
+            chapter=chapter,
+            topic=topic,
+            difficulty=difficulty,
+            question_count=q_count,
+            recent_hashes=recent_hashes,
+        )
+    except Exception as e:
+        print(f"[Gaming Zone Groq Error] {data.game_type}: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Groq AI generation error: {str(e)}",
+        )
 
     payload_data = content.get("data", [])
 

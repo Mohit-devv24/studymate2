@@ -29,8 +29,9 @@ def _call_groq_completion(prompt: str, system_prompt: str) -> Optional[dict]:
     if not api_key:
         raise ValueError("GROQ_API_KEY is not configured on the server.")
 
-    models_to_try = [primary_model]
-    for fallback in ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "openai/gpt-oss-120b"]:
+    valid_models = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+    models_to_try = [primary_model] if primary_model in valid_models else ["openai/gpt-oss-120b"]
+    for fallback in valid_models:
         if fallback not in models_to_try:
             models_to_try.append(fallback)
 
