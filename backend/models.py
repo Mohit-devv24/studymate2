@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -252,6 +253,24 @@ class AcademicProfile(Base):
     selected_chapter = Column(String(150), nullable=True, default="")
     selected_topic = Column(String(150), nullable=True, default="")
     updated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    @property
+    def branch(self) -> str:
+        """Alias for branch_or_stream to ensure uniform field access across modules."""
+        return self.branch_or_stream or ""
+
+    @branch.setter
+    def branch(self, value: Optional[str]):
+        self.branch_or_stream = value or ""
+
+    @property
+    def course(self) -> str:
+        """Alias for course_name to ensure uniform field access across modules."""
+        return self.course_name or ""
+
+    @course.setter
+    def course(self, value: Optional[str]):
+        self.course_name = value or ""
 
 
 class GeneratedGameQuestion(Base):

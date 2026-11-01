@@ -183,10 +183,19 @@ def get_or_create_daily_challenges(
     selected_course = (
         course_override.strip()
         if (course_override and course_override.strip().lower() != "all" and course_override.strip() != "All Courses")
-        else ((acad_prof.course if acad_prof and acad_prof.course else None) or user.course or "JEE (Main & Advanced)")
+        else (
+            (acad_prof.course_name if acad_prof and acad_prof.course_name else None)
+            or (acad_prof.course if acad_prof and acad_prof.course else None)
+            or user.course
+            or "JEE (Main & Advanced)"
+        )
     )
-    class_or_semester = (acad_prof.class_or_semester if acad_prof else None) or "Class 12"
-    branch = (acad_prof.branch if acad_prof else None) or "Computer Science & Engineering"
+    class_or_semester = (acad_prof.class_or_semester if acad_prof and acad_prof.class_or_semester else "")
+    branch = (
+        (acad_prof.branch_or_stream if acad_prof and acad_prof.branch_or_stream else "")
+        or (acad_prof.branch if acad_prof and acad_prof.branch else "")
+    )
+    category = (acad_prof.category if acad_prof and acad_prof.category else "") or "competitive"
 
     today_str = datetime.now(STUDY_TIMEZONE).strftime("%Y-%m-%d")
 
@@ -223,6 +232,7 @@ def get_or_create_daily_challenges(
         course=selected_course,
         class_or_semester=class_or_semester,
         branch=branch,
+        category=category,
         existing_fingerprints=prior_fps,
         total_count=10,
     )

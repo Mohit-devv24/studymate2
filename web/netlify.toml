@@ -8,6 +8,7 @@
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   VITE_API_URL = "https://studymate2-s38r.onrender.com"
+  VITE_API_BASE_URL = "https://studymate2-s38r.onrender.com"
 
 # Client-side SPA routing fallback for React Router
 [[redirects]]

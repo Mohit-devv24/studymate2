@@ -1,4 +1,4 @@
-const rawApiUrl = (import.meta as any).env?.VITE_API_URL;
+const rawApiUrl = (import.meta as any).env?.VITE_API_BASE_URL || (import.meta as any).env?.VITE_API_URL;
 const isProd = Boolean((import.meta as any).env?.PROD);
 
 const API_URL = (
