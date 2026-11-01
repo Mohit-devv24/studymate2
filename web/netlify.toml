@@ -1,0 +1,16 @@
+# Netlify Configuration for StudyMate (when Base directory is configured as 'web')
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+  VITE_API_URL = "https://studymate2-s38r.onrender.com"
+
+# Client-side SPA routing fallback for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

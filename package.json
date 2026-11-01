@@ -1,0 +1,9 @@
+{
+  "name": "studymate-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix web run build",
+    "web:install": "npm --prefix web install",
+    "web:build": "npm --prefix web run build"
+  }
+}
