@@ -585,6 +585,74 @@ def update_user_course(
     return {"message": "Course updated", "course": current_user.course}
 
 # =========================================================
+# AUTH DIAGNOSTIC (SAFE, DOES NOT EXPOSE HASH OR PASSWORD)
+# =========================================================
+
+@app.get("/api/auth/diagnostic")
+def auth_diagnostic(email: str = "mohitagarwal123k@gmail.com", db: Session = Depends(get_db)):
+    norm = email.strip().lower()
+    user = db.query(User).filter(User.email == norm).first()
+    all_users = [{"id": u.id, "email": u.email, "name": u.name} for u in db.query(User).all()]
+    
+    if not user:
+        return {
+            "found": False,
+            "queried_email": norm,
+            "all_users_count": len(all_users),
+            "users": all_users,
+            "db_url": str(engine.url),
+            "db_env": bool(os.getenv("DATABASE_URL")),
+        }
+
+    pw = user.password or ""
+    import argon2
+
+    is_valid_argon2_syntax = False
+    argon2_parse_error = None
+    try:
+        argon2.PasswordHasher().verify(pw, "syntax_check_dummy_string_only")
+    except argon2.exceptions.VerificationError:
+        # VerificationError means the hash syntax was parsed and valid, just didn't match dummy
+        is_valid_argon2_syntax = True
+    except argon2.exceptions.InvalidHashError as e:
+        is_valid_argon2_syntax = False
+        argon2_parse_error = str(e)
+    except Exception as e:
+        is_valid_argon2_syntax = False
+        argon2_parse_error = f"{type(e).__name__}: {e}"
+
+    pwdlib_identified = False
+    try:
+        pwdlib_identified = any(h.identify(pw) for h in password_hash.hashers)
+    except Exception:
+        pass
+
+    # Check common hash formats without printing hash
+    is_argon2 = pw.startswith("$argon2")
+    is_bcrypt = pw.startswith("$2b$") or pw.startswith("$2a$") or pw.startswith("$2y$")
+    is_sha256 = len(pw) == 64 and all(c in "0123456789abcdefABCDEF" for c in pw)
+    is_plaintext = not pw.startswith("$") and len(pw) < 60
+
+    return {
+        "found": True,
+        "user_id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "course": user.course,
+        "hash_length": len(pw),
+        "is_argon2_prefix": is_argon2,
+        "is_bcrypt_prefix": is_bcrypt,
+        "is_sha256": is_sha256,
+        "is_plaintext": is_plaintext,
+        "is_valid_argon2_syntax": is_valid_argon2_syntax,
+        "argon2_parse_error": argon2_parse_error,
+        "pwdlib_identified": pwdlib_identified,
+        "all_users_count": len(all_users),
+        "db_url": str(engine.url),
+        "db_env": bool(os.getenv("DATABASE_URL")),
+    }
+
+# =========================================================
 # SIGNUP & LOGIN
 # =========================================================
 
