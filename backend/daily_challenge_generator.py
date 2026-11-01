@@ -128,7 +128,12 @@ def generate_daily_challenges_for_profile(
     # Sample chapters for context
     sample_chapters = {}
     for sub in subjects:
-        chaps = resolve_chapters(category or "competitive", course, sub, branch or "", class_or_semester or "")
+        chaps = resolve_chapters(
+            subject=sub,
+            course_name=course,
+            branch_or_stream=branch or "",
+            class_or_semester=class_or_semester or "",
+        )
         sample_chapters[sub] = chaps[:5] if chaps else ["Fundamentals", "Core Principles", "Applications"]
 
     system_prompt = f"""You are the Chief Academic Examination Controller and Senior Curriculum Designer for '{course}' ({class_or_semester} {branch}).
