@@ -583,7 +583,7 @@ body.dark {
   margin-bottom: 56px !important;
 }
 
-/* 2. UNIVERSAL EDGE-TO-EDGE PINNED FOOTER — PERMANENT DEEP OBSIDIAN */
+/* 2. UNIVERSAL EDGE-TO-EDGE PINNED FOOTER — DYNAMIC WARM PAPER (LIGHT) & OBSIDIAN (DARK) */
 .site-footer,
 .dashboard-main .site-footer,
 .subjects-main .site-footer,
@@ -591,8 +591,13 @@ body.dark {
 .notes-main .site-footer,
 .timer-main .site-footer,
 .planner-main .site-footer,
+.calendar-main .site-footer,
+.goals-main .site-footer,
+.analytics-main .site-footer,
+.habits-main .site-footer,
 .feature-main .site-footer,
-.feature-app-main .site-footer {
+.feature-app-main .site-footer,
+.gaming-zone-main .site-footer {
   width: 100% !important;
   max-width: 100% !important;
   margin-top: auto !important;
@@ -600,19 +605,42 @@ body.dark {
   margin-left: 0 !important;
   margin-right: 0 !important;
   border: none !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid #E7E1DA !important;
   border-radius: 0 !important;
-  background: #0b0f17 !important;
-  color: #ffffff !important;
+  background: #FFFFFF !important;
+  color: #17191F !important;
   box-sizing: border-box !important;
   padding: 0 !important;
   z-index: 10 !important;
 }
 
+html.dark-theme .site-footer,
+body.dark-theme .site-footer,
+html.dark-theme .dashboard-main .site-footer,
+body.dark-theme .dashboard-main .site-footer,
+html.dark-theme .subjects-main .site-footer,
+body.dark-theme .subjects-main .site-footer,
+html.dark-theme .tasks-main .site-footer,
+body.dark-theme .tasks-main .site-footer,
+html.dark-theme .notes-main .site-footer,
+body.dark-theme .notes-main .site-footer,
+html.dark-theme .timer-main .site-footer,
+body.dark-theme .timer-main .site-footer,
+html.dark-theme .planner-main .site-footer,
+body.dark-theme .planner-main .site-footer,
+html.dark-theme .feature-main .site-footer,
+body.dark-theme .feature-main .site-footer,
+html.dark-theme .gaming-zone-main .site-footer,
+body.dark-theme .gaming-zone-main .site-footer {
+  background: #181715 !important;
+  color: #F5F2ED !important;
+  border-top: 1px solid #34302B !important;
+}
+
 .site-footer-inner {
   width: min(1200px, 92%) !important;
   margin: 0 auto !important;
-  padding: 48px 24px 36px !important;
+  padding: 44px 24px 32px !important;
   gap: clamp(28px, 4vw, 56px) !important;
   box-sizing: border-box !important;
 }
@@ -620,9 +648,16 @@ body.dark {
 .site-footer-bottom {
   width: min(1200px, 92%) !important;
   margin: 0 auto !important;
-  padding: 18px 24px 24px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 16px 24px 22px !important;
+  border-top: 1px solid #E7E1DA !important;
   box-sizing: border-box !important;
+  color: #777B85 !important;
+}
+
+html.dark-theme .site-footer-bottom,
+body.dark-theme .site-footer-bottom {
+  border-top: 1px solid #34302B !important;
+  color: #A7A197 !important;
 }
 
 /* 3. WARM PAPER AESTHETIC — NO PASTEL RAINBOW GRADIENTS */
@@ -962,13 +997,15 @@ html.dark-theme .tasks-empty {
   border-color: #34302B !important;
 }
 
-html.dark-theme .site-footer {
-  background: #0B0F17 !important;
-  border-top-color: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
+html.dark-theme .site-footer,
+body.dark-theme .site-footer {
+  background: #181715 !important;
+  border-top-color: #34302B !important;
+  color: #F5F2ED !important;
 }
 
-html.dark-theme .site-footer-mark {
+html.dark-theme .site-footer-mark,
+body.dark-theme .site-footer-mark {
   background: #C47A43 !important;
   border-color: #D28A52 !important;
   color: #ffffff !important;
