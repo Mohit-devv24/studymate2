@@ -28,9 +28,7 @@ button {
 
 .subjects-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 86% 8%, rgba(183, 120, 67, 0.035), transparent 23%),
-    #f6f7fb;
+  background: var(--bg);
   color: var(--subjects-ink);
   font-family: "DM Sans", Arial, sans-serif;
 }
@@ -403,13 +401,15 @@ button {
 }
 
 .subject-primary-btn {
-  border: 1px solid var(--subjects-ink);
-  background: var(--subjects-ink);
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #fff;
+  border-radius: 8px;
 }
 
 .subject-primary-btn:hover {
-  background: #302f2b;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .subject-cancel-btn {
@@ -642,17 +642,19 @@ button {
   height: 38px;
   margin-top: 19px;
   padding: 0 17px;
-  border: 1px solid var(--subjects-ink);
-  border-radius: 5px;
-  background: var(--subjects-ink);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
   color: #fff;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .subjects-empty > button:hover,
 .subjects-no-results > button:hover {
-  background: #302f2b;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .empty-flow {
@@ -881,5 +883,151 @@ button {
   .subjects-message {
     transition: none;
     animation: none;
+  }
+}
+
+
+
+
+/* ==========================================
+   STUDYMATE — MY SUBJECTS CLEAN EDITORIAL THEME
+   ========================================== */
+
+.subjects-page {
+  background: var(--bg, #F5F2ED) !important;
+  color: var(--text, #17191F) !important;
+}
+
+/* Header */
+.subjects-header {
+  background: var(--surface, #FFFFFF) !important;
+  border: 1px solid var(--border, #E7E1DA) !important;
+  border-radius: 20px !important;
+  padding: 32px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+}
+
+.subjects-header h1 {
+  color: inherit !important;
+  font-family: Georgia, "Playfair Display", serif !important;
+  font-weight: 500 !important;
+}
+
+.subjects-header p {
+  color: var(--muted, #777B85) !important;
+}
+
+.subjects-eyebrow {
+  color: var(--accent, #C47A43) !important;
+}
+
+/* Subject cards — unified Warm Paper surfaces */
+.subject-card {
+  border-radius: 18px !important;
+  border: 1px solid var(--border, #E7E1DA) !important;
+  background: var(--surface, #FFFFFF) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.subject-card:nth-child(n) {
+  background: var(--surface, #FFFFFF) !important;
+  border-color: var(--border, #E7E1DA) !important;
+}
+
+.subject-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--accent, #C47A43) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Subject titles and descriptions */
+.subject-card h2,
+.subject-card h3 {
+  color: inherit !important;
+  font-family: Georgia, "Playfair Display", serif !important;
+  font-weight: 500 !important;
+}
+
+.subject-card p {
+  color: var(--muted, #777B85) !important;
+}
+
+/* Subject icons */
+.subject-card .subject-icon {
+  border-radius: 12px !important;
+  background: var(--surface-2, #F0ECE6) !important;
+  color: var(--accent, #C47A43) !important;
+  border: 1px solid var(--border, #E7E1DA) !important;
+}
+
+/* Progress indicators */
+.subject-card progress {
+  accent-color: var(--accent, #C47A43) !important;
+}
+
+.subject-card .progress-bar {
+  background: var(--surface-2, #F0ECE6) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+.subject-card .progress-fill {
+  background: var(--accent, #C47A43) !important;
+  border-radius: 999px !important;
+}
+
+/* Dark Theme Overrides */
+html.dark-theme .subjects-page,
+body.dark-theme .subjects-page {
+  background: #151412 !important;
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .subjects-header,
+html.dark-theme .subject-card,
+html.dark-theme .subject-card:nth-child(n),
+body.dark-theme .subjects-header,
+body.dark-theme .subject-card,
+body.dark-theme .subject-card:nth-child(n) {
+  background: #201E1B !important;
+  border-color: #34302B !important;
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .subject-card .subject-icon,
+body.dark-theme .subject-card .subject-icon {
+  background: #272420 !important;
+  border-color: #34302B !important;
+  color: #D28A52 !important;
+}
+
+html.dark-theme .subject-card .progress-bar,
+body.dark-theme .subject-card .progress-bar {
+  background: #272420 !important;
+}
+
+html.dark-theme .subject-card .progress-fill,
+body.dark-theme .subject-card .progress-fill {
+  background: #D28A52 !important;
+}
+
+html.dark-theme .subjects-eyebrow,
+body.dark-theme .subjects-eyebrow {
+  color: #D28A52 !important;
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .subjects-header {
+    padding: 22px !important;
+  }
+
+  .subject-card {
+    border-radius: 16px !important;
+  }
+
+  .subjects-empty {
+    padding: 22px !important;
   }
 }

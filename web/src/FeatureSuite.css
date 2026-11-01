@@ -1,17 +1,36 @@
 .feature-app-page {
   min-height: 100vh;
   width: 100%;
-  background: #f5f2eb;
-  color: #171614;
+  background: var(--bg, #f5f2eb);
+  color: var(--text, #171614);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark-theme .feature-app-page,
+body.dark-theme .feature-app-page {
+  background: #151413;
+  color: #f6f4ee;
+}
+
+html.dark-theme .feature-card,
+body.dark-theme .feature-card,
+html.dark-theme .test-card,
+body.dark-theme .test-card {
+  background: #1e1d1a;
+  border-color: rgba(246, 244, 238, 0.12);
+  color: #f6f4ee;
 }
 
 .feature-app-main {
-  width: calc(100% - var(--app-sidebar-width, 280px));
-  margin-left: var(--app-sidebar-width, 280px);
+  width: calc(100% - var(--app-sidebar-width, 220px));
+  margin-left: var(--app-sidebar-width, 220px);
   min-width: 0;
   max-width: none;
   box-sizing: border-box;
-  padding: 64px 7%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .feature-app-header {
@@ -125,20 +144,21 @@
 
 .feature-app-button {
   border: 0;
-  border-radius: 8px;
-  padding: 13px 18px;
-  background: #191816;
+  border-radius: 999px;
+  padding: 12px 22px;
+  background: var(--accent, #C47A43);
   color: white;
   cursor: pointer;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(196, 122, 67, 0.25);
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .feature-app-button:hover {
+  background: var(--accent-hover, #D18B51);
   transform: translateY(-1px);
-  opacity: 0.9;
 }
 
 .feature-app-button.secondary {
@@ -435,4 +455,229 @@
     margin-left: 0;
     padding: 30px 18px;
   }
+}
+
+/* ==========================================
+   STUDYMATE — WARM PAPER FEATURE SUITE THEME
+   Clean typography, terracotta accents, unified dark theme
+   ========================================== */
+
+.feature-app-page {
+  background: var(--bg, #f6f4ee) !important;
+  color: var(--text, #1d1c19) !important;
+}
+
+html.dark-theme .feature-app-page,
+body.dark-theme .feature-app-page {
+  background: #151413 !important;
+  color: #f6f4ee !important;
+}
+
+.feature-app-header {
+  padding: 28px 32px !important;
+  border: 1px solid var(--line, #e5e0d5) !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.dark-theme .feature-app-header,
+body.dark-theme .feature-app-header {
+  background: #1e1d1a !important;
+  border-color: rgba(246, 244, 238, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+.feature-app-eyebrow,
+.feature-app-kicker {
+  color: #b87542 !important;
+}
+
+html.dark-theme .feature-app-eyebrow,
+html.dark-theme .feature-app-kicker,
+body.dark-theme .feature-app-eyebrow,
+body.dark-theme .feature-app-kicker {
+  color: #d48955 !important;
+}
+
+.feature-app-header h1 {
+  color: #1d1c19 !important;
+}
+
+html.dark-theme .feature-app-header h1,
+body.dark-theme .feature-app-header h1 {
+  color: #f6f4ee !important;
+}
+
+.feature-app-subtitle {
+  color: #736b63 !important;
+}
+
+html.dark-theme .feature-app-subtitle,
+body.dark-theme .feature-app-subtitle {
+  color: #a39e93 !important;
+}
+
+.feature-app-card {
+  border: 1px solid #e5e0d5 !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+}
+
+html.dark-theme .feature-app-card,
+body.dark-theme .feature-app-card {
+  background: #1e1d1a !important;
+  border-color: rgba(246, 244, 238, 0.1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+@media (max-width: 700px) {
+  .feature-app-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  .feature-app-header {
+    padding: 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .feature-app-header h1 {
+    font-size: clamp(32px, 8vw, 44px) !important;
+  }
+}
+
+/* =====================================
+   CALENDAR & ANALYTICS DARK MODE REPAIR
+   ===================================== */
+html.dark-theme .feature-app-calendar,
+body.dark-theme .feature-app-calendar {
+  border-color: #34302B !important;
+  background: #201E1B !important;
+}
+
+html.dark-theme .calendar-weekday,
+body.dark-theme .calendar-weekday {
+  background: #272420 !important;
+  border-bottom-color: #34302B !important;
+  border-right-color: #34302B !important;
+  color: #A49D93 !important;
+}
+
+html.dark-theme .calendar-day,
+body.dark-theme .calendar-day {
+  background: #201E1B !important;
+  border-right-color: #34302B !important;
+  border-bottom-color: #34302B !important;
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .calendar-day.muted,
+body.dark-theme .calendar-day.muted {
+  background: #181715 !important;
+  color: #6D6860 !important;
+}
+
+html.dark-theme .calendar-day.today,
+body.dark-theme .calendar-day.today {
+  box-shadow: inset 0 0 0 2px #D28A52 !important;
+}
+
+html.dark-theme .calendar-event,
+body.dark-theme .calendar-event {
+  background: rgba(210, 138, 82, 0.22) !important;
+  color: #E19A62 !important;
+}
+
+html.dark-theme .calendar-toolbar,
+body.dark-theme .calendar-toolbar {
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .calendar-toolbar h3,
+body.dark-theme .calendar-toolbar h3 {
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .analytics-chart-bar,
+body.dark-theme .analytics-chart-bar {
+  background: #272420 !important;
+}
+
+html.dark-theme .analytics-chart-bar span,
+body.dark-theme .analytics-chart-bar span {
+  background: #D28A52 !important;
+}
+
+html.dark-theme .analytics-chart-label,
+body.dark-theme .analytics-chart-label {
+  color: #A49D93 !important;
+}
+
+html.dark-theme .feature-app-stat,
+body.dark-theme .feature-app-stat {
+  background: #272420 !important;
+  border-color: #34302B !important;
+}
+
+html.dark-theme .feature-app-stat strong,
+body.dark-theme .feature-app-stat strong {
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .feature-app-stat-label,
+body.dark-theme .feature-app-stat-label {
+  color: #A49D93 !important;
+}
+
+html.dark-theme .feature-app-list-item,
+body.dark-theme .feature-app-list-item {
+  background: #201E1B !important;
+  border-color: #34302B !important;
+}
+
+html.dark-theme .feature-app-list-copy strong,
+body.dark-theme .feature-app-list-copy strong {
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .feature-app-list-copy span,
+body.dark-theme .feature-app-list-copy span {
+  color: #A49D93 !important;
+}
+
+html.dark-theme .feature-app-button,
+body.dark-theme .feature-app-button {
+  background: #D28A52 !important;
+  color: #151412 !important;
+}
+
+html.dark-theme .feature-app-button:hover,
+body.dark-theme .feature-app-button:hover {
+  background: #E19A62 !important;
+}
+
+html.dark-theme .feature-app-button.secondary,
+body.dark-theme .feature-app-button.secondary {
+  background: #272420 !important;
+  color: #F5F2ED !important;
+}
+
+html.dark-theme .feature-app-progress,
+body.dark-theme .feature-app-progress {
+  background: #272420 !important;
+}
+
+html.dark-theme .feature-app-progress span,
+body.dark-theme .feature-app-progress span {
+  background: #D28A52 !important;
+}
+
+html.dark-theme .feature-app-form input,
+body.dark-theme .feature-app-form input {
+  background: #272420 !important;
+  border-color: #34302B !important;
+  color: #F5F2ED !important;
 }

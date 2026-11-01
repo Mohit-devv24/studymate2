@@ -1,457 +1,524 @@
-
 /* =========================================================
-   STUDYMATE — STUDY TIMER PAGE
-   Dedicated styles. Existing index.css can remain untouched.
+   STUDYMATE STUDY TIMER — DISTRACTION-FREE & FULLSCREEN
+   Warm Paper Canvas • Deep Obsidian • Ambient Glass
    ========================================================= */
 
-.timer-page .timer-main {
-  padding-bottom: 60px;
+.timer-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg, #F5F2ED);
+  color: var(--ink, #151412);
+  transition: background 0.3s ease;
+  overflow-x: hidden;
 }
 
-.timer-page .dashboard-header {
-  margin-bottom: 28px;
+/* Wallpaper is rendered seamlessly when running or in fullscreen */
+.timer-page.timer-running,
+.timer-page.is-fullscreen {
+  background: var(--timer-wallpaper, #151412) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
 }
 
-.timer-page .small-label {
-  color: #6558e8;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 3px;
-  margin: 0 0 8px;
+/* Fullscreen Overlay Mode */
+.timer-page.is-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px 16px !important;
+  box-sizing: border-box !important;
 }
 
-.timer-page .dashboard-header h1 {
-  margin: 0 0 8px;
-  color: #202535;
-  font-size: 32px;
-  line-height: 1.1;
-  letter-spacing: -1px;
-}
-
-.timer-page .header-subtitle {
-  margin: 0;
-  color: #8b92a1;
-  font-size: 13px;
-}
-
-.study-timer-card {
-  width: min(760px, calc(100vw - 310px));
-  margin: 10px auto 0;
-  padding: 34px 42px 30px;
+.timer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   box-sizing: border-box;
-  border: 1px solid #e7e8ef;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 50px rgba(35, 40, 65, 0.08);
-  text-align: center;
 }
 
-.timer-title {
+.timer-main.fullscreen-mode-active {
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Header Action */
+.timer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timer-fullscreen-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Status Banner */
+.timer-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: rgba(196, 122, 67, 0.12);
+  border: 1px solid rgba(196, 122, 67, 0.3);
+  color: #C47A43;
+  font-size: 13px;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+}
+
+.timer-status-banner button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Timer Card (Frosted Glass) */
+.study-timer-card {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto 40px;
+  padding: 36px 32px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #E7E1DA;
+  border-radius: 24px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.study-timer-card.card-fullscreen {
+  max-width: 840px;
+  padding: 40px 36px;
+  margin: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  background: rgba(28, 26, 23, 0.88) !important;
+  color: #F5F2ED !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Mode Pills */
+.timer-mode-pills {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
 }
 
-.timer-title span {
-  color: #6b5cf4;
-  font-size: 20px;
-  line-height: 1;
+.mode-pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #E7E1DA;
+  background: transparent;
+  color: #777B85;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.timer-title h2 {
-  margin: 0;
-  color: #202535;
-  font-size: 16px;
-  font-weight: 800;
+.mode-pill:hover {
+  border-color: #C47A43;
+  color: #C47A43;
+}
+
+.mode-pill.active {
+  background: #C47A43;
+  color: #FFFFFF !important;
+  border-color: #C47A43;
+  box-shadow: 0 4px 14px rgba(196, 122, 67, 0.3);
+}
+
+/* Big Timer Digits */
+.big-timer-wrapper {
+  margin: 16px 0 28px;
 }
 
 .big-timer {
-  margin: 24px 0 20px;
-  color: #202535;
-  font-size: 76px;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(68px, 14vw, 120px);
+  font-weight: 800;
+  letter-spacing: -2px;
   line-height: 1;
-  font-weight: 900;
-  letter-spacing: 1px;
-  font-variant-numeric: tabular-nums;
+  color: inherit;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
-.timer-adjust-buttons,
-.timer-presets,
-.timer-main-buttons {
+.study-timer-card.card-fullscreen .big-timer {
+  font-size: clamp(80px, 18vw, 150px);
+  color: #FFFFFF !important;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Status Indicator */
+.timer-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(120, 115, 105, 0.1);
+  font-size: 12px;
+  font-weight: 600;
+  color: #777B85;
+}
+
+.study-timer-card.card-fullscreen .timer-status-indicator {
+  background: rgba(255, 255, 255, 0.1);
+  color: #D28A52;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #A49D93;
+}
+
+.status-dot.running {
+  background: #10B981;
+  box-shadow: 0 0 10px #10B981;
+  animation: pulseDot 1.8s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+/* Adjust Buttons */
+.timer-adjust-buttons {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
 }
 
 .timer-adjust {
-  height: 40px;
-  padding: 0 17px;
-  border: 1px solid #e2e4eb;
-  border-radius: 11px;
-  background: #fff;
-  color: #555d6e;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #E7E1DA;
+  background: transparent;
+  color: #777B85;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 600;
   cursor: pointer;
-  transition: .18s ease;
+  transition: 0.2s ease;
 }
 
 .timer-adjust:hover:not(:disabled) {
-  border-color: #bdb5ff;
-  color: #5d50d6;
-  background: #faf9ff;
+  border-color: #C47A43;
+  color: #C47A43;
   transform: translateY(-1px);
 }
 
 .timer-adjust:disabled {
-  opacity: .5;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.timer-presets {
-  margin-top: 14px;
-}
-
-.timer-presets button {
-  min-width: 70px;
-  height: 34px;
-  padding: 0 13px;
-  border: 1px solid #e7e8ef;
-  border-radius: 10px;
-  background: #f7f8fb;
-  color: #626a7b;
-  font-size: 11px;
-  font-weight: 750;
-  cursor: pointer;
-  transition: .18s ease;
-}
-
-.timer-presets button:hover {
-  border-color: #d4cffc;
-  background: #f0eeff;
-  color: #5d50d6;
-}
-
+/* Primary Action Buttons */
 .timer-main-buttons {
-  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
 }
 
-.timer-page .timer-start,
-.timer-page .timer-reset {
-  height: 42px;
-  min-height: 42px;
-  padding: 0 25px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 800;
+.timer-start {
+  min-height: 48px;
+  padding: 0 32px;
+  border-radius: 999px;
+  border: none;
+  background: #C47A43;
+  color: #FFFFFF !important;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: .2s ease;
+  box-shadow: 0 6px 20px rgba(196, 122, 67, 0.35);
+  transition: all 0.2s ease;
 }
 
-.timer-page .timer-start {
-  border: 0;
-  background: linear-gradient(135deg, #7161ff, #5748e8);
-  color: #fff;
-  box-shadow: 0 9px 22px rgba(100, 86, 236, .22);
+.timer-start:hover {
+  background: #D28A52;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(196, 122, 67, 0.45);
 }
 
-.timer-page .timer-start:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 27px rgba(100, 86, 236, .28);
+.timer-start.is-running {
+  background: #34302B;
+  color: #F5F2ED !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-.timer-page .timer-reset {
-  border: 1px solid #e3e5ec;
-  background: #fff;
-  color: #596173;
+.study-timer-card.card-fullscreen .timer-start.is-running {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.timer-page .timer-reset:hover {
-  border-color: #cbc7f5;
-  background: #fafaff;
+.timer-reset,
+.timer-fullscreen-btn,
+.timer-sound-btn {
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid #E7E1DA;
+  background: transparent;
+  color: #777B85;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Wallpaper picker */
+.timer-reset:hover {
+  border-color: #EF4444;
+  color: #EF4444;
+}
 
+.timer-fullscreen-btn:hover,
+.timer-sound-btn:hover {
+  border-color: #C47A43;
+  color: #C47A43;
+}
+
+/* Wallpaper Section */
 .wallpaper-section {
-  margin-top: 27px;
-  padding-top: 22px;
-  border-top: 1px solid #eceef3;
+  padding-top: 26px;
+  border-top: 1px solid #E7E1DA;
   text-align: left;
 }
 
-.wallpaper-heading {
-  margin-bottom: 13px;
+.study-timer-card.card-fullscreen .wallpaper-section {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .wallpaper-heading h3 {
-  margin: 0 0 4px;
-  color: #252a3a;
-  font-size: 14px;
-  font-weight: 850;
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: inherit;
 }
 
 .wallpaper-heading p {
-  margin: 0;
-  color: #9aa1ae;
-  font-size: 11px;
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #777B85;
+}
+
+.study-timer-card.card-fullscreen .wallpaper-heading p {
+  color: #A49D93;
 }
 
 .wallpaper-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .wallpaper-option {
   position: relative;
-  min-height: 66px;
-  padding: 0;
-  overflow: hidden;
+  min-height: 80px;
+  border-radius: 12px;
   border: 2px solid transparent;
-  border-radius: 13px;
-  background-size: cover !important;
-  background-position: center !important;
-  color: #fff;
   cursor: pointer;
-  box-shadow: 0 5px 16px rgba(30, 35, 55, .10);
-  transition: .2s ease;
-}
-
-.wallpaper-option::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.04));
+  overflow: hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.2s ease;
 }
 
 .wallpaper-option span {
-  position: absolute;
-  left: 10px;
-  bottom: 9px;
+  position: relative;
   z-index: 2;
-  font-size: 10px;
-  font-weight: 800;
-  text-shadow: 0 1px 5px rgba(0,0,0,.35);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-.wallpaper-option b {
+.wallpaper-option .check-mark {
   position: absolute;
-  top: 7px;
+  top: 8px;
   right: 8px;
-  z-index: 3;
+  z-index: 2;
   width: 20px;
   height: 20px;
+  border-radius: 50%;
+  background: #C47A43;
+  color: white;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  background: #fff;
-  color: #5d50d6;
   font-size: 11px;
-  box-shadow: 0 3px 10px rgba(0,0,0,.18);
 }
 
 .wallpaper-option:hover {
   transform: translateY(-2px);
-  box-shadow: 0 9px 20px rgba(30,35,55,.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .wallpaper-option.selected {
-  border-color: #7566ff;
-  box-shadow: 0 0 0 2px rgba(117,102,255,.12),
-              0 9px 20px rgba(30,35,55,.14);
-}
-
-.custom-wallpaper {
-  background-size: cover !important;
-  background-position: center !important;
+  border-color: #C47A43;
+  box-shadow: 0 0 0 2px #C47A43;
 }
 
 .wallpaper-upload {
   position: relative;
-  min-height: 66px;
+  min-height: 80px;
+  border: 1.5px dashed #E7E1DA;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  box-sizing: border-box;
-  border: 1.5px dashed #cfd2dc;
-  border-radius: 13px;
-  background: #fafbfe;
-  color: #697184;
+  gap: 4px;
+  background: rgba(120, 115, 105, 0.05);
+  color: #777B85;
   cursor: pointer;
-  transition: .2s ease;
-}
-
-.wallpaper-upload:hover {
-  border-color: #8e82ff;
-  background: #f8f7ff;
-  color: #5d50d6;
+  transition: all 0.2s ease;
 }
 
 .wallpaper-upload input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
-.upload-plus {
-  color: #6b5cf4;
-  font-size: 22px;
-  line-height: 20px;
-  font-weight: 300;
+.wallpaper-upload:hover {
+  border-color: #C47A43;
+  color: #C47A43;
+}
+
+.wallpaper-upload .upload-plus {
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .wallpaper-upload strong {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
 }
 
 .wallpaper-upload small {
-  color: #a0a6b2;
-  font-size: 8px;
+  font-size: 9px;
+  opacity: 0.8;
 }
 
-/* Focus Mode */
+/* =========================================================
+   DARK THEME SPECIFIC OVERRIDES (PRESERVING WALLPAPERS)
+   ========================================================= */
 
-.focus-mode-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  isolation: isolate;
+html.dark-theme .timer-page:not(.timer-running):not(.is-fullscreen),
+body.dark-theme .timer-page:not(.timer-running):not(.is-fullscreen) {
+  background: #151412 !important;
+  color: #F5F2ED !important;
 }
 
-.focus-mode-overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: rgba(0, 0, 0, .38);
+html.dark-theme .study-timer-card:not(.card-fullscreen),
+body.dark-theme .study-timer-card:not(.card-fullscreen) {
+  background: #201E1B !important;
+  border-color: #34302B !important;
+  color: #F5F2ED !important;
 }
 
-.focus-mode-content {
-  width: min(900px, 90vw);
-  text-align: center;
-  color: #fff;
+html.dark-theme .mode-pill,
+body.dark-theme .mode-pill {
+  border-color: #34302B !important;
+  color: #A49D93 !important;
 }
 
-.focus-mode-label {
-  margin-bottom: 25px;
-  color: rgba(255,255,255,.75);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 4px;
+html.dark-theme .mode-pill.active,
+body.dark-theme .mode-pill.active {
+  background: #D28A52 !important;
+  color: #151412 !important;
+  border-color: #D28A52 !important;
 }
 
-.focus-mode-timer {
-  color: #fff;
-  font-size: clamp(90px, 15vw, 190px);
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: 8px;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 8px 35px rgba(0,0,0,.35);
+html.dark-theme .timer-adjust,
+html.dark-theme .timer-reset,
+html.dark-theme .timer-fullscreen-btn,
+html.dark-theme .timer-sound-btn,
+html.dark-theme .wallpaper-upload,
+body.dark-theme .timer-adjust,
+body.dark-theme .timer-reset,
+body.dark-theme .timer-fullscreen-btn,
+body.dark-theme .timer-sound-btn,
+body.dark-theme .wallpaper-upload {
+  border-color: #34302B !important;
+  color: #A49D93 !important;
 }
 
-.focus-mode-controls {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 45px;
+html.dark-theme .timer-start,
+body.dark-theme .timer-start {
+  background: #D28A52 !important;
+  color: #151412 !important;
 }
 
-.focus-pause-btn,
-.focus-exit-btn {
-  min-width: 130px;
-  height: 48px;
-  padding: 0 24px;
-  border-radius: 13px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: .2s ease;
+html.dark-theme .wallpaper-section,
+body.dark-theme .wallpaper-section {
+  border-color: #34302B !important;
 }
 
-.focus-pause-btn {
-  border: 0;
-  background: #fff;
-  color: #202535;
-  box-shadow: 0 8px 25px rgba(0,0,0,.2);
-}
-
-.focus-exit-btn {
-  border: 1px solid rgba(255,255,255,.35);
-  background: rgba(255,255,255,.10);
-  color: #fff;
-  backdrop-filter: blur(10px);
-}
-
-.focus-pause-btn:hover,
-.focus-exit-btn:hover {
-  transform: translateY(-2px);
-}
-
-.focus-exit-btn:hover {
-  background: rgba(255,255,255,.18);
-}
-
-@media (max-width: 1000px) {
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
   .study-timer-card {
-    width: min(760px, calc(100vw - 260px));
+    padding: 24px 18px;
+    border-radius: 18px;
   }
-
-  .wallpaper-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 700px) {
-  .timer-page .timer-main {
-    padding: 28px 18px 50px;
-  }
-
-  .study-timer-card {
-    width: 100%;
-    padding: 28px 20px 24px;
-  }
-
   .big-timer {
-    font-size: 58px;
+    font-size: clamp(52px, 14vw, 76px);
   }
-
-  .wallpaper-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 460px) {
-  .wallpaper-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .timer-adjust {
-    padding: 0 12px;
-  }
-
-  .focus-mode-controls {
+  .timer-main-buttons {
     flex-direction: column;
-    align-items: center;
+    width: 100%;
   }
-
-  .focus-pause-btn,
-  .focus-exit-btn {
-    width: 180px;
+  .timer-start,
+  .timer-reset,
+  .timer-fullscreen-btn,
+  .timer-sound-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -1,0 +1,166 @@
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+).replace(/\/$/, "");
+
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("authToken");
+}
+
+export function saveAuthToken(token: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("authToken", token);
+}
+
+export function clearAuthToken(): void {
+  logoutUser();
+}
+
+export function saveUser(user: any): void {
+  if (typeof window === "undefined" || !user) return;
+  if (user.id != null) localStorage.setItem("userId", String(user.id));
+  if (user.name) localStorage.setItem("userName", user.name);
+  if (user.email) localStorage.setItem("userEmail", user.email);
+}
+
+export function getStoredUser() {
+  return getCurrentUser();
+}
+
+export function getCurrentUser() {
+  if (typeof window === "undefined") return null;
+  const token = localStorage.getItem("authToken");
+  const id = localStorage.getItem("userId");
+  const name = localStorage.getItem("userName");
+  const email = localStorage.getItem("userEmail");
+  if (!token && !id && !name) {
+    return { id: 1, name: "Student", email: "student@studymate.internal", token: "" };
+  }
+  return { id: id || "1", name: name || "Student", email: email || "student@studymate.internal", token: token || "" };
+}
+
+export function logoutUser(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
+}
+
+export interface ApiResponse<T = any> {
+  ok: boolean;
+  status: number;
+  data: T;
+  json: () => Promise<T>;
+}
+
+export async function apiFetch<T = any>(
+  path: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
+  const headers = new Headers(options.headers || {});
+
+  if (options.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const token = getAuthToken();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(
+      "Unable to connect to StudyMate backend. Make sure the server is running."
+    );
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+
+  if (response.status === 401 && token && !path.includes("/api/login") && !path.includes("/api/signup")) {
+    logoutUser();
+  }
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    data,
+    json: async () => data,
+  };
+}
+
+export async function registerUser(name: string, email: string, password: string) {
+  return signupUser(name, email, password);
+}
+
+export async function signupUser(name: string, email: string, password: string) {
+  const response = await apiFetch("/api/signup", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      response.data?.detail || response.data?.message || "Signup failed"
+    );
+  }
+  const data = response.data;
+  const user = data.user || data;
+  const id = data.id ?? data.user_id ?? user.id;
+  const token = data.token ?? data.access_token;
+  const normalized = {
+    ...data,
+    id,
+    token,
+    access_token: token,
+    user: { id, name: data.name ?? user.name, email: data.email ?? user.email },
+  };
+  return normalized;
+}
+
+export async function loginUser(email: string, password: string) {
+  const response = await apiFetch("/api/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      response.data?.detail || response.data?.message || "Invalid email or password"
+    );
+  }
+
+  const data = response.data;
+  const user = data.user || data;
+  const id = data.id ?? data.user_id ?? user.id ?? user.user_id;
+  const token = data.token ?? data.access_token;
+  const normalized = {
+    ...data,
+    id,
+    token,
+    access_token: token,
+    name: data.name ?? user.name,
+    email: data.email ?? user.email,
+    user: { id, name: data.name ?? user.name, email: data.email ?? user.email },
+  };
+
+  if (typeof window !== "undefined") {
+    if (normalized.token) localStorage.setItem("authToken", normalized.token);
+    if (normalized.id != null) localStorage.setItem("userId", String(normalized.id));
+    if (normalized.name) localStorage.setItem("userName", normalized.name);
+    if (normalized.email) localStorage.setItem("userEmail", normalized.email);
+  }
+
+  return normalized;
+}
+
+export { API_URL };

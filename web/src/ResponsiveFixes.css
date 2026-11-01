@@ -1,0 +1,1102 @@
+/* StudyMate responsive layout corrections — loaded after feature styles. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+body {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  overflow-x: clip;
+}
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+}
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.app-sidebar {
+  width: var(--app-sidebar-width, 220px);
+  min-width: 0;
+}
+.app-sidebar-nav {
+  min-width: 0;
+}
+.app-sidebar-item {
+  min-width: 0;
+}
+.app-sidebar-label {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-overflow: clip;
+  line-height: 1.3;
+}
+.dashboard-main,
+.subjects-main,
+.tasks-main,
+.notes-main,
+.timer-main,
+.planner-main,
+.feature-main {
+  min-width: 0;
+}
+
+/* Planner's main content is sized against the shared fixed navigation. */
+.planner-main {
+  min-width: 0;
+  max-width: none;
+}
+.planner-header > div:first-child {
+  min-width: 0;
+}
+.planner-header h1 {
+  overflow-wrap: anywhere;
+}
+.planner-header > div:first-child > p:last-child {
+  max-width: 52ch;
+  line-height: 1.55;
+}
+.planner-stats > div {
+  min-width: 0;
+}
+.planner-form > * {
+  min-width: 0;
+}
+.planner-board {
+  min-width: 0;
+}
+.planner-session {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Timer and focus mode should fit short and narrow phone viewports. */
+.study-timer-card {
+  min-width: 0;
+  max-width: 100%;
+}
+.big-timer {
+  font-size: clamp(42px, 12vw, 76px);
+}
+.focus-mode-overlay {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(20px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  overflow-y: auto;
+}
+.focus-mode-content {
+  width: min(900px, 100%);
+  min-width: 0;
+  margin: auto;
+}
+.focus-mode-timer {
+  font-size: clamp(48px, 16vw, 190px);
+  letter-spacing: clamp(0px, 1vw, 8px);
+  overflow-wrap: anywhere;
+}
+.focus-mode-controls {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .app-sidebar {
+    position: relative;
+    inset: auto;
+    z-index: 10;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    padding: 14px 16px 12px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--app-sidebar-line, #d8d5cc);
+  }
+  .app-sidebar-brand {
+    padding: 2px 2px 12px;
+  }
+  .app-sidebar-brand-mark {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+  .app-sidebar-brand-text strong {
+    font-size: 17px;
+  }
+  .app-sidebar-brand-text span {
+    font-size: 8px;
+  }
+  .app-sidebar-divider {
+    margin-bottom: 10px;
+  }
+  .app-sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+  }
+  .app-sidebar-item {
+    min-height: 42px;
+    padding: 8px 9px;
+    gap: 8px;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+  .app-sidebar-item-icon {
+    width: 18px;
+    flex-basis: 18px;
+    font-size: 14px;
+  }
+  .app-sidebar-label {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-overflow: clip;
+}
+  .app-sidebar-bottom {
+    margin-top: 10px;
+    padding-top: 8px;
+  }
+  .app-sidebar-user {
+    padding: 10px 2px;
+    gap: 9px;
+  }
+  .app-sidebar-user-copy strong {
+    max-width: min(60vw, 240px);
+    font-size: 12px;
+  }
+  .app-sidebar-user-copy small {
+    font-size: 10px;
+  }
+  .app-sidebar-logout {
+    min-height: 42px;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .dashboard-main,
+  .subjects-main,
+  .tasks-main,
+  .notes-main,
+  .timer-main,
+  .planner-main,
+  .feature-main {
+    width: 100% !important;
+    max-width: 100%;
+    margin-left: 0 !important;
+    padding-left: clamp(14px, 4vw, 24px) !important;
+    padding-right: clamp(14px, 4vw, 24px) !important;
+  }
+  .dashboard-header {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .dashboard-header h1 {
+    max-width: 100%;
+    font-size: clamp(27px, 7vw, 36px);
+    overflow-wrap: anywhere;
+  }
+  .dashboard-subtitle,
+  .header-subtitle {
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+  .planner-page {
+    display: block;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .planner-main {
+    padding-top: 24px !important;
+    padding-bottom: 40px !important;
+  }
+  .planner-header {
+    gap: 16px;
+    align-items: flex-start;
+    padding-bottom: 20px;
+  }
+  .planner-header h1 {
+    font-size: clamp(36px, 10vw, 48px);
+    line-height: 1;
+    letter-spacing: -1.5px;
+  }
+  .planner-header > div:first-child > p:last-child {
+    font-size: 14px;
+  }
+  .planner-header-meta {
+    display: none;
+  }
+  .planner-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+  .planner-stats > div {
+    min-height: 82px;
+    padding: 16px;
+  }
+  .planner-stats strong {
+    font-size: 30px;
+  }
+  .planner-stats small {
+    font-size: 11px;
+  }
+  .planner-editor {
+    padding: clamp(17px, 5vw, 24px);
+    border-radius: 14px;
+  }
+  .planner-editor-title h2 {
+    font-size: clamp(27px, 8vw, 36px);
+    line-height: 1.04;
+    overflow-wrap: anywhere;
+  }
+  .planner-editor-title span {
+    line-height: 1.5;
+    font-size: 13px;
+  }
+  .planner-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .planner-form label {
+    font-size: 10px;
+  }
+  .planner-form input,
+  .planner-form select {
+    height: 46px;
+    font-size: 14px;
+  }
+  .planner-subject-field {
+    grid-column: auto;
+  }
+  .planner-add-button {
+    width: 100%;
+    height: 46px;
+    font-size: 13px;
+  }
+  .planner-section-header {
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .planner-section-header h2 {
+    font-size: 26px;
+  }
+  .planner-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .planner-day-body {
+    min-height: 0;
+  }
+  .planner-day-head {
+    padding: 12px;
+  }
+  .planner-day-head strong {
+    font-size: 14px;
+  }
+  .planner-day-head span,
+  .planner-day-empty {
+    font-size: 11px;
+  }
+  .planner-session-time,
+  .planner-session p {
+    font-size: 10px;
+  }
+  .planner-session-actions {
+    flex-wrap: wrap;
+  }
+  .planner-session-actions button {
+    min-height: 30px;
+    font-size: 10px;
+  }
+
+  .study-timer-card {
+    width: 100%;
+    margin-top: 8px;
+    padding: 24px 16px;
+  }
+  .wallpaper-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .focus-mode-content {
+    padding: 12px 0;
+  }
+  .focus-mode-label {
+    margin-bottom: 20px;
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+  .focus-mode-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .focus-pause-btn,
+  .focus-exit-btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    height: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-sidebar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .app-sidebar-item {
+    padding: 8px 7px;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .app-sidebar-item-icon {
+    width: 16px;
+    flex-basis: 16px;
+  }
+  .app-sidebar-brand-text strong {
+    font-size: 16px;
+  }
+  .planner-main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .big-timer {
+    font-size: 42px;
+  }
+  .timer-adjust-buttons {
+    gap: 7px;
+  }
+  .timer-adjust {
+    min-height: 40px;
+    padding: 0 9px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1024px) {
+  .app-sidebar {
+    width: 200px;
+    min-width: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .dashboard-main,
+  .subjects-main,
+  .tasks-main,
+  .notes-main,
+  .timer-main,
+  .planner-main,
+  .feature-main {
+    margin-left: 200px !important;
+    width: calc(100% - 200px) !important;
+    min-width: 0;
+  }
+  .planner-main {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .planner-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .planner-subject-field {
+    grid-column: span 2;
+  }
+  .planner-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .study-timer-card {
+    width: min(760px, calc(100vw - 240px));
+  }
+}
+
+
+/* ==========================================================================
+   STUDYMATE UNIVERSAL DESIGN SYSTEM: WARM PAPER & OBSIDIAN DARK MODE & FOOTER
+   ========================================================================== */
+
+:root {
+  --app-sidebar-width: 220px;
+  --bg: #F5F2ED;
+  --surface: #FFFFFF;
+  --surface-2: #F0ECE6;
+  --surface-3: #EAE5DE;
+  --text: #17191F;
+  --ink: #17191F;
+  --muted: #777B85;
+  --ink-muted: #777B85;
+  --line: #E7E1DA;
+  --border: #E7E1DA;
+  --accent: #C47A43;
+  --accent-hover: #D18B51;
+  --accent-soft: rgba(196, 122, 67, 0.12);
+  --purple: #C47A43;
+  --purple-2: #D18B51;
+  --purple-soft: rgba(196, 122, 67, 0.12);
+}
+
+html.dark-theme,
+body.dark-theme,
+html.dark,
+body.dark {
+  --bg: #151412;
+  --surface: #201E1B;
+  --surface-2: #272420;
+  --surface-3: #2F2B26;
+  --text: #F5F2ED;
+  --ink: #F5F2ED;
+  --muted: #A49D93;
+  --ink-muted: #A49D93;
+  --line: #34302B;
+  --border: #34302B;
+  --accent: #D28A52;
+  --accent-hover: #E19A62;
+  --accent-soft: rgba(210, 138, 82, 0.18);
+  --purple: #D28A52;
+  --purple-2: #E19A62;
+  --purple-soft: rgba(210, 138, 82, 0.18);
+}
+
+/* 1. UNIVERSAL PAGE SHELLS & STICKY FOOTER LOCK */
+.dashboard,
+.subjects-page,
+.tasks-page,
+.notes-page,
+.timer-page,
+.planner-page,
+.feature-app-page,
+.calendar-page,
+.dashboard,
+.subjects-page,
+.tasks-page,
+.notes-page,
+.timer-page,
+.planner-page,
+.calendar-page,
+.goals-page,
+.analytics-page,
+.habits-page,
+.gaming-zone-page {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  overflow-x: clip !important;
+}
+
+.dashboard-main,
+.subjects-main,
+.tasks-main,
+.notes-main,
+.timer-main,
+.planner-main,
+.calendar-main,
+.goals-main,
+.analytics-main,
+.habits-main,
+.feature-main,
+.feature-app-main,
+.gaming-zone-main {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  flex: 1 0 auto !important;
+  width: calc(100% - var(--app-sidebar-width, 220px)) !important;
+  max-width: calc(100% - var(--app-sidebar-width, 220px)) !important;
+  margin-left: var(--app-sidebar-width, 220px) !important;
+  padding: 0 !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  box-sizing: border-box !important;
+}
+
+/* Content padding applied to all page sections inside main except footer */
+.dashboard-main > *:not(.site-footer):not(.dashboard-message):not(.quote-modal),
+.subjects-main > *:not(.site-footer),
+.tasks-main > *:not(.site-footer),
+.notes-main > *:not(.site-footer),
+.timer-main > *:not(.site-footer),
+.planner-main > *:not(.site-footer),
+.feature-main > *:not(.site-footer),
+.feature-app-main > *:not(.site-footer) {
+  padding-left: clamp(20px, 4vw, 54px) !important;
+  padding-right: clamp(20px, 4vw, 54px) !important;
+  box-sizing: border-box !important;
+}
+
+.dashboard-main > *:first-child,
+.subjects-main > *:first-child,
+.tasks-main > *:first-child,
+.notes-main > *:first-child,
+.timer-main > *:first-child,
+.planner-main > *:first-child,
+.feature-main > *:first-child,
+.feature-app-main > *:first-child {
+  padding-top: 36px !important;
+}
+
+/* Generous bottom margin on the last content section before footer */
+.dashboard-main > *:nth-last-child(2),
+.subjects-main > *:nth-last-child(2),
+.tasks-main > *:nth-last-child(2),
+.notes-main > *:nth-last-child(2),
+.timer-main > *:nth-last-child(2),
+.planner-main > *:nth-last-child(2),
+.feature-main > *:nth-last-child(2),
+.feature-app-main > *:nth-last-child(2) {
+  margin-bottom: 56px !important;
+}
+
+/* 2. UNIVERSAL EDGE-TO-EDGE PINNED FOOTER — PERMANENT DEEP OBSIDIAN */
+.site-footer,
+.dashboard-main .site-footer,
+.subjects-main .site-footer,
+.tasks-main .site-footer,
+.notes-main .site-footer,
+.timer-main .site-footer,
+.planner-main .site-footer,
+.feature-main .site-footer,
+.feature-app-main .site-footer {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: auto !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important;
+  background: #0b0f17 !important;
+  color: #ffffff !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  z-index: 10 !important;
+}
+
+.site-footer-inner {
+  width: min(1200px, 92%) !important;
+  margin: 0 auto !important;
+  padding: 48px 24px 36px !important;
+  gap: clamp(28px, 4vw, 56px) !important;
+  box-sizing: border-box !important;
+}
+
+.site-footer-bottom {
+  width: min(1200px, 92%) !important;
+  margin: 0 auto !important;
+  padding: 18px 24px 24px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-sizing: border-box !important;
+}
+
+/* 3. WARM PAPER AESTHETIC — NO PASTEL RAINBOW GRADIENTS */
+.card,
+.dashboard-card,
+.dashboard-panel,
+.task-editor,
+.tasks-list-section,
+.note-editor,
+.notes-list-section,
+.note-card,
+.subject-card,
+.study-timer-card,
+.planner-board,
+.planner-form,
+.planner-stat-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--text) !important;
+  box-shadow: 0 4px 16px rgba(29, 28, 25, 0.04) !important;
+  border-radius: 16px !important;
+}
+
+/* Task & Dashboard Overview Cards — Replace Rainbow with Warm Paper */
+.task-overview .overview-card,
+.dashboard-overview .overview-card,
+.overview-card,
+.task-overview .overview-card:nth-child(n),
+.overview-card:nth-child(n) {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  color: var(--text) !important;
+  box-shadow: 0 3px 12px rgba(29, 28, 25, 0.04) !important;
+  transform: none !important;
+}
+
+.overview-card strong,
+.task-overview strong {
+  color: var(--text) !important;
+}
+
+.overview-card .overview-label {
+  color: var(--muted) !important;
+}
+
+.overview-progress-top strong {
+  color: var(--accent) !important;
+}
+
+.task-progress-track,
+.progress-bar {
+  background: var(--surface-3) !important;
+  border-radius: 999px !important;
+}
+
+.task-progress-fill,
+.progress-fill {
+  background: var(--accent) !important;
+  border-radius: 999px !important;
+}
+
+/* Primary Action Buttons across all pages (Warm Terracotta) */
+.task-primary-btn,
+.task-editor button,
+.subject-primary-btn,
+.subjects-page button:not(.subjects-nav-item):not(.site-footer button):not(.app-sidebar-logout):not(.app-sidebar button),
+.note-primary-btn,
+.notes-page button[type="submit"],
+.timer-action-btn,
+.planner-submit-btn,
+button.btn-primary,
+button.primary-btn,
+.primary-btn {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--accent) !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(184, 117, 66, 0.22) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.task-primary-btn:hover,
+.task-editor button:hover,
+.subject-primary-btn:hover,
+.subjects-page button:not(.subjects-nav-item):not(.site-footer button):not(.app-sidebar-logout):not(.app-sidebar button):hover,
+.note-primary-btn:hover,
+.notes-page button[type="submit"]:hover,
+.timer-action-btn:hover,
+.planner-submit-btn:hover,
+button.btn-primary:hover,
+button.primary-btn:hover {
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Inputs, Textareas, and Selects */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select,
+.task-form input,
+.note-form input,
+.note-form textarea,
+.subjects-page input,
+.planner-form input,
+.planner-form select {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent) !important;
+  outline: 2px solid var(--accent-soft) !important;
+}
+
+/* Empty State Boxes */
+.subjects-empty,
+.notes-empty,
+.tasks-empty {
+  background: var(--surface-2) !important;
+  border: 2px dashed var(--line) !important;
+  border-radius: 18px !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+
+.subjects-empty h3,
+.notes-empty h3,
+.tasks-empty h3 {
+  color: var(--text) !important;
+}
+
+.subjects-empty p,
+.notes-empty p,
+.tasks-empty p {
+  color: var(--muted) !important;
+}
+
+.subjects-empty button {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+}
+
+/* Headings and Typography */
+h1, h2, h3, h4 {
+  color: var(--text) !important;
+}
+
+h1 em, h2 em,
+.tasks-eyebrow,
+.subjects-eyebrow,
+.editor-kicker,
+.list-kicker,
+.small-label {
+  color: var(--accent) !important;
+}
+
+.tasks-subtitle,
+.subjects-subtitle,
+.notes-subtitle {
+  color: var(--muted) !important;
+}
+
+/* 4. PERMANENT OBSIDIAN SIDEBAR (High-Contrast matching Image 3) */
+.app-sidebar {
+  background: #13141c !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.app-sidebar-item {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  border: 1.5px solid transparent !important;
+}
+
+.app-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.app-sidebar-item.active {
+  background: rgba(99, 85, 238, 0.2) !important;
+  border: 1.5px solid #6355ee !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.app-sidebar-brand {
+  color: #ffffff !important;
+}
+
+.app-sidebar-brand-mark {
+  background: #ff9b54 !important;
+  border-color: #ff9b54 !important;
+  color: #17191f !important;
+}
+
+.app-sidebar-avatar {
+  background: #ff9b54 !important;
+  color: #17191f !important;
+}
+
+.app-sidebar-logout {
+  color: #b5b8c1 !important;
+  background: #22252d !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.app-sidebar-logout:hover {
+  background: rgba(255, 155, 84, 0.16) !important;
+  color: #ff9b54 !important;
+}
+
+/* 5. FULL WARM OBSIDIAN DARK MODE OVERRIDES */
+html.dark-theme,
+body.dark-theme,
+html.dark,
+body.dark {
+  background: #151413 !important;
+  color: #f6f4ee !important;
+}
+
+html.dark-theme .app-sidebar,
+body.dark-theme .app-sidebar {
+  background: #111217 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+html.dark-theme .app-sidebar-item {
+  color: #ffffff !important;
+}
+
+html.dark-theme .app-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+html.dark-theme .app-sidebar-item.active {
+  background: rgba(99, 85, 238, 0.2) !important;
+  border: 1.5px solid #6355ee !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+html.dark-theme .app-sidebar-brand {
+  color: #f6f4ee !important;
+}
+
+html.dark-theme .app-sidebar-brand-mark {
+  background: #d48955 !important;
+  border-color: #d48955 !important;
+  color: #151413 !important;
+}
+
+html.dark-theme .app-sidebar-avatar {
+  background: #d48955 !important;
+  color: #151413 !important;
+}
+
+html.dark-theme .app-sidebar-logout {
+  color: #a39e93 !important;
+  background: #1e1d1a !important;
+  border: 1px solid rgba(246, 244, 238, 0.1) !important;
+}
+
+html.dark-theme .app-sidebar-logout:hover {
+  background: rgba(212, 137, 85, 0.16) !important;
+  color: #d48955 !important;
+}
+
+html.dark-theme .card,
+html.dark-theme .dashboard-card,
+html.dark-theme .dashboard-panel,
+html.dark-theme .task-editor,
+html.dark-theme .tasks-list-section,
+html.dark-theme .note-editor,
+html.dark-theme .notes-list-section,
+html.dark-theme .note-card,
+html.dark-theme .subject-card,
+html.dark-theme .study-timer-card,
+html.dark-theme .planner-board,
+html.dark-theme .planner-form,
+html.dark-theme .planner-stat-card,
+html.dark-theme .task-item,
+html.dark-theme .task-overview .overview-card,
+html.dark-theme .overview-card {
+  background: #201E1B !important;
+  border-color: #34302B !important;
+  color: #F5F2ED !important;
+  box-shadow: none !important;
+}
+
+html.dark-theme input,
+html.dark-theme textarea,
+html.dark-theme select {
+  background: #272420 !important;
+  color: #F5F2ED !important;
+  border-color: #34302B !important;
+}
+
+html.dark-theme .task-primary-btn,
+html.dark-theme .task-editor button,
+html.dark-theme .subject-primary-btn,
+html.dark-theme .subjects-page button:not(.subjects-nav-item):not(.site-footer button):not(.app-sidebar-logout):not(.app-sidebar button),
+html.dark-theme .note-primary-btn,
+html.dark-theme .notes-page button[type="submit"],
+html.dark-theme .timer-action-btn,
+html.dark-theme .planner-submit-btn,
+html.dark-theme button.btn-primary,
+html.dark-theme button.primary-btn {
+  background: #D28A52 !important;
+  color: #151412 !important;
+  border-color: #D28A52 !important;
+  box-shadow: 0 2px 8px rgba(210, 138, 82, 0.28) !important;
+}
+
+html.dark-theme .subjects-empty,
+html.dark-theme .notes-empty,
+html.dark-theme .tasks-empty {
+  background: #201E1B !important;
+  border-color: #34302B !important;
+}
+
+html.dark-theme .site-footer {
+  background: #0B0F17 !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+html.dark-theme .site-footer-mark {
+  background: #C47A43 !important;
+  border-color: #D28A52 !important;
+  color: #ffffff !important;
+}
+
+/* Mobile full width sidebar reset & grid responsiveness */
+@media (max-width: 900px) {
+  .dashboard,
+  .subjects-page,
+  .tasks-page,
+  .notes-page,
+  .timer-page,
+  .planner-page,
+  .calendar-page,
+  .goals-page,
+  .analytics-page,
+  .habits-page,
+  .gaming-zone-page {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--app-sidebar-line, rgba(255, 255, 255, 0.08)) !important;
+    z-index: 9999 !important;
+  }
+
+  .dashboard-main,
+  .subjects-main,
+  .tasks-main,
+  .notes-main,
+  .timer-main,
+  .planner-main,
+  .calendar-main,
+  .goals-main,
+  .analytics-main,
+  .habits-main,
+  .feature-main,
+  .feature-app-main,
+  .gaming-zone-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .dashboard-main > *:not(.site-footer):not(.dashboard-message):not(.quote-modal),
+  .subjects-main > *:not(.site-footer),
+  .tasks-main > *:not(.site-footer),
+  .notes-main > *:not(.site-footer),
+  .timer-main > *:not(.site-footer),
+  .planner-main > *:not(.site-footer),
+  .calendar-main > *:not(.site-footer),
+  .goals-main > *:not(.site-footer),
+  .analytics-main > *:not(.site-footer),
+  .habits-main > *:not(.site-footer),
+  .feature-main > *:not(.site-footer),
+  .feature-app-main > *:not(.site-footer),
+  .gaming-zone-main > *:not(.site-footer) {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .site-footer,
+  .dashboard-main .site-footer,
+  .subjects-main .site-footer,
+  .tasks-main .site-footer,
+  .notes-main .site-footer,
+  .timer-main .site-footer,
+  .planner-main .site-footer,
+  .calendar-main .site-footer,
+  .goals-main .site-footer,
+  .analytics-main .site-footer,
+  .habits-main .site-footer,
+  .feature-main .site-footer,
+  .feature-app-main .site-footer,
+  .gaming-zone-main .site-footer {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+  }
+
+  .site-footer-inner {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 32px 16px 20px !important;
+  }
+
+  .site-footer-bottom {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 16px 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  /* Prevent grids from overflowing on phone screens */
+  .game-challenges-grid,
+  .game-badges-grid,
+  .game-stats-grid,
+  .overview-grid,
+  .dashboard-content-grid,
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
