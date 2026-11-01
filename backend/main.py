@@ -208,7 +208,7 @@ def get_or_create_daily_challenges(
                 .order_by(AIGeneratedChallengeQuestion.order_index, AIGeneratedChallengeQuestion.id)
                 .all()
             )
-            if len(questions) >= 5:
+            if len(questions) >= 3:
                 return existing_set, questions
 
     prior_fps = {

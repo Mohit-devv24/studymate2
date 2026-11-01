@@ -111,6 +111,15 @@ def generate_daily_challenges_for_profile(
         existing_fingerprints = set()
 
     # 1. Resolve student's subjects from academic syllabus
+    c_lower = (course or "").lower()
+    if not category or category == "competitive":
+        if "jee" in c_lower or "neet" in c_lower or "cuet" in c_lower:
+            category = "competitive"
+        elif "class" in c_lower or "12th" in c_lower or "11th" in c_lower or "10th" in c_lower or "9th" in c_lower:
+            category = "school"
+        elif "b.tech" in c_lower or "btech" in c_lower or "engineering" in c_lower:
+            category = "undergraduate"
+
     subjects = resolve_subjects(category or "competitive", course, branch or "", class_or_semester or "")
     if not subjects:
         # Fallback default subjects based on standard naming

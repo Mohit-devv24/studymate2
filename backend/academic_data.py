@@ -428,52 +428,76 @@ def get_academic_presets():
     return ACADEMIC_CATEGORIES
 
 
-def resolve_subjects(category: str, course_name: str, branch_or_stream: str = "", class_or_semester: str = "") -> list:
+def resolve_subjects(category: str = "", course_name: str = "", branch_or_stream: str = "", class_or_semester: str = "") -> list:
     """Return exact subjects list based on student's full academic context."""
     category = (category or "").lower().strip()
     course_lower = (course_name or "").lower().strip()
 
-    # 1. School Education
-    if category == "school" or "class" in course_lower:
-        for cat in ACADEMIC_CATEGORIES:
-            if cat["id"] == "school":
-                for c in cat["courses"]:
-                    if c["name"].lower() == course_lower or c["id"] == course_lower:
-                        if "subjects" in c:
-                            return [s["name"] for s in c["subjects"]]
-                        if "streams" in c:
-                            for stream in c["streams"]:
-                                if stream["name"].lower() == branch_or_stream.lower():
-                                    return [s["name"] for s in stream["subjects"]]
-                            return [s["name"] for s in c["streams"][0]["subjects"]]
-
-    # 2. Competitive Exams
+    # 1. Competitive Exams
     if category == "competitive" or "jee" in course_lower or "neet" in course_lower or "cuet" in course_lower:
         for cat in ACADEMIC_CATEGORIES:
             if cat["id"] == "competitive":
                 for c in cat["courses"]:
-                    if c["name"].lower() == course_lower or c["id"] == course_lower or c["name"] in course_name:
+                    c_id = c["id"].lower()
+                    c_name_l = c["name"].lower()
+                    if (
+                        c_name_l == course_lower
+                        or c_id == course_lower
+                        or c_name_l in course_lower
+                        or ("jee" in course_lower and ("jee" in c_id or "jee" in c_name_l))
+                        or ("neet" in course_lower and ("neet" in c_id or "neet" in c_name_l))
+                        or ("cuet" in course_lower and ("cuet" in c_id or "cuet" in c_name_l))
+                    ):
                         return [s["name"] for s in c["subjects"]]
 
+    # 2. School Education
+    if category == "school" or "class" in course_lower or "12th" in course_lower or "11th" in course_lower or "10th" in course_lower or "9th" in course_lower:
+        for cat in ACADEMIC_CATEGORIES:
+            if cat["id"] == "school":
+                for c in cat["courses"]:
+                    c_id = c["id"].lower()
+                    c_name_l = c["name"].lower()
+                    matches_class = (
+                        c_name_l == course_lower
+                        or c_id == course_lower
+                        or c_name_l in course_lower
+                        or (("12" in course_lower or "12th" in course_lower) and "12" in c_id)
+                        or (("11" in course_lower or "11th" in course_lower) and "11" in c_id)
+                        or (("10" in course_lower or "10th" in course_lower) and "10" in c_id)
+                        or (("9" in course_lower or "9th" in course_lower) and "9" in c_id)
+                    )
+                    if matches_class:
+                        if "subjects" in c:
+                            return [s["name"] for s in c["subjects"]]
+                        if "streams" in c:
+                            for stream in c["streams"]:
+                                if stream["name"].lower() == branch_or_stream.lower() or branch_or_stream.lower() in stream["name"].lower():
+                                    return [s["name"] for s in stream["subjects"]]
+                            return [s["name"] for s in c["streams"][0]["subjects"]]
+
     # 3. Undergraduate
-    for cat in ACADEMIC_CATEGORIES:
-        if cat["id"] == "undergraduate":
-            for c in cat["courses"]:
-                if c["id"] == "btech" or "b.tech" in course_lower or "engineering" in course_lower:
-                    branches = c.get("branches", [])
-                    target_branch = branches[0]
-                    for b in branches:
-                        if b["id"] == branch_or_stream.lower() or b["name"].lower() == branch_or_stream.lower():
-                            target_branch = b
-                            break
-                    for sem in target_branch.get("semesters", []):
-                        if sem["semester"].lower() == class_or_semester.lower():
-                            return [s["name"] for s in sem["subjects"]]
-                    if target_branch.get("semesters"):
-                        return [s["name"] for s in target_branch["semesters"][0]["subjects"]]
+    if category == "undergraduate" or "b.tech" in course_lower or "btech" in course_lower or "bca" in course_lower or "bsc" in course_lower or "engineering" in course_lower:
+        for cat in ACADEMIC_CATEGORIES:
+            if cat["id"] == "undergraduate":
+                for c in cat["courses"]:
+                    if c["id"] == "btech" or "b.tech" in course_lower or "engineering" in course_lower:
+                        branches = c.get("branches", [])
+                        target_branch = branches[0]
+                        for b in branches:
+                            if b["id"] == branch_or_stream.lower() or b["name"].lower() == branch_or_stream.lower() or branch_or_stream.lower() in b["name"].lower():
+                                target_branch = b
+                                break
+                        for sem in target_branch.get("semesters", []):
+                            if sem["semester"].lower() == class_or_semester.lower():
+                                return [s["name"] for s in sem["subjects"]]
+                        if target_branch.get("semesters"):
+                            return [s["name"] for s in target_branch["semesters"][0]["subjects"]]
+                    elif c["id"] in course_lower or c["name"].lower() in course_lower:
+                        if "subjects" in c:
+                            return [s["name"] for s in c["subjects"]]
 
     # Default fallback
-    return ["Physics", "Chemistry", "Mathematics", "Computer Science"]
+    return ["Physics", "Chemistry", "Mathematics"]
 
 
 def resolve_chapters(subject: str, course_name: str = "", branch_or_stream: str = "", class_or_semester: str = "") -> list:
