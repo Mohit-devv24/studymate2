@@ -37,10 +37,14 @@ from models import (
     GamingProfile,
     AcademicProfile,
     GeneratedGameQuestion,
+    DailyAIChallengeSet,
+    AIGeneratedChallengeQuestion,
+    AIDailyChallengeCompletion,
 )
 import json
 from test_generator import COURSE_PRESETS, generate_questions_for_topic
 from game_generator import generate_course_aware_game_content
+from daily_challenge_generator import generate_daily_challenges_for_profile, compute_fingerprint
 from academic_data import get_academic_presets, resolve_subjects, resolve_chapters
 from pwdlib import PasswordHash
 
@@ -106,375 +110,7 @@ XP_REWARDS = {
     "hard": 30,
 }
 
-SYLLABUS_CHALLENGES = [
-    # JEE (Main & Advanced)
-    {
-        "slug": "jee-phys-kinematics",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Physics",
-        "module": "Kinematics & Dynamics",
-        "title": "Horizontal Range Formula",
-        "description": "Calculate projectile horizontal range given launch speed u and elevation angle theta.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "jee-phys-rotational",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Physics",
-        "module": "Rotational Dynamics",
-        "title": "Moment of Inertia of Solid Cylinder",
-        "description": "Determine the moment of inertia of a uniform solid cylinder about its central axis.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "jee-phys-thermo",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Physics",
-        "module": "Thermodynamics",
-        "title": "Carnot Engine Efficiency",
-        "description": "Compute the theoretical maximum efficiency of a reversible heat engine.",
-        "difficulty": "hard",
-        "estimated_minutes": 35,
-    },
-    {
-        "slug": "jee-chem-hybridization",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Chemistry",
-        "module": "Chemical Bonding",
-        "title": "SF6 Molecular Geometry",
-        "description": "Determine the hybridization and VSEPR geometry of Sulfur Hexafluoride.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "jee-chem-thermo",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Chemistry",
-        "module": "Thermodynamics",
-        "title": "Gibbs Free Energy Spontaneity",
-        "description": "State the thermodynamic condition required for spontaneous reaction at constant T & P.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "jee-chem-organic",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Chemistry",
-        "module": "Organic Chemistry",
-        "title": "SN1 Reaction Stereochemistry",
-        "description": "Predict the optical activity and stereochemistry produced in carbocation-mediated SN1.",
-        "difficulty": "hard",
-        "estimated_minutes": 35,
-    },
-    {
-        "slug": "jee-math-calculus",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Mathematics",
-        "module": "Integral Calculus",
-        "title": "Definite Integral Symmetry",
-        "description": "Evaluate symmetric definite integral of an odd polynomial function.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "jee-math-matrices",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Mathematics",
-        "module": "Matrices & Determinants",
-        "title": "Cramer's Rule for Unique Solution",
-        "description": "Identify non-singularity condition for unique solvability of system AX = B.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "jee-math-conics",
-        "course": "JEE (Main & Advanced)",
-        "subject": "Mathematics",
-        "module": "Coordinate Geometry",
-        "title": "Tangent to Parabola",
-        "description": "Formulate standard tangent equation for y^2 = 4ax with slope m.",
-        "difficulty": "hard",
-        "estimated_minutes": 35,
-    },
-
-    # NEET (UG Medical)
-    {
-        "slug": "neet-bio-cell",
-        "course": "NEET (UG Medical)",
-        "subject": "Biology",
-        "module": "Cell Biology",
-        "title": "Cellular Energy Synthesis",
-        "description": "Identify organelle responsible for aerobic cellular respiration and ATP generation.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "neet-bio-genetics",
-        "course": "NEET (UG Medical)",
-        "subject": "Biology",
-        "module": "Genetics & Inheritance",
-        "title": "Mendelian Dihybrid Ratio",
-        "description": "Determine the phenotypic ratio in the F2 generation of a classic dihybrid cross.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "neet-bio-cardiac",
-        "course": "NEET (UG Medical)",
-        "subject": "Biology",
-        "module": "Human Physiology",
-        "title": "Intrinsic Cardiac Pacemaker",
-        "description": "Identify nodal cardiac tissue establishing sinus rhythm of the human heart.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "neet-bio-photosynthesis",
-        "course": "NEET (UG Medical)",
-        "subject": "Biology",
-        "module": "Plant Physiology",
-        "title": "Primary CO2 Acceptor in C4",
-        "description": "Identify the primary carbon dioxide acceptor substrate in C4 Hatch-Slack pathway.",
-        "difficulty": "hard",
-        "estimated_minutes": 35,
-    },
-    {
-        "slug": "neet-chem-biomolecules",
-        "course": "NEET (UG Medical)",
-        "subject": "Chemistry",
-        "module": "Biomolecules",
-        "title": "Peptide Bond Linkage",
-        "description": "Identify covalent amide linkage formed between carboxyl and amino groups.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "neet-chem-kinetics",
-        "course": "NEET (UG Medical)",
-        "subject": "Chemistry",
-        "module": "Chemical Kinetics",
-        "title": "First Order Reaction Half-Life",
-        "description": "Calculate half-life of a first-order decomposition given rate constant k.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "neet-phys-optics",
-        "course": "NEET (UG Medical)",
-        "subject": "Physics",
-        "module": "Ray Optics",
-        "title": "Total Internal Reflection Critical Angle",
-        "description": "Express critical angle condition for light traveling from dense medium to air.",
-        "difficulty": "easy",
-        "estimated_minutes": 20,
-    },
-    {
-        "slug": "neet-phys-circuits",
-        "course": "NEET (UG Medical)",
-        "subject": "Physics",
-        "module": "Current Electricity",
-        "title": "Wheatstone Bridge Null Condition",
-        "description": "State resistance ratio condition where galvanometer current is zero.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-
-    # Class 12th Board Exam
-    {
-        "slug": "cbse-phys-gauss",
-        "course": "Class 12th Board Exam",
-        "subject": "Physics",
-        "module": "Electrostatics",
-        "title": "Gauss's Law of Electrostatics",
-        "description": "Determine total electric flux leaving an arbitrary closed surface enclosing charge q.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "cbse-phys-drift",
-        "course": "Class 12th Board Exam",
-        "subject": "Physics",
-        "module": "Current Electricity",
-        "title": "Drift Velocity of Electrons",
-        "description": "Formulate steady drift velocity in terms of electric field and collision time.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "cbse-chem-boiling",
-        "course": "Class 12th Board Exam",
-        "subject": "Chemistry",
-        "module": "Solutions",
-        "title": "Elevation in Boiling Point",
-        "description": "Express colligative boiling elevation in terms of ebullioscopic constant and molality.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "cbse-chem-nernst",
-        "course": "Class 12th Board Exam",
-        "subject": "Chemistry",
-        "module": "Electrochemistry",
-        "title": "Nernst Equation at 298 K",
-        "description": "Calculate cell potential against reaction quotient Q under non-standard conditions.",
-        "difficulty": "medium",
-        "estimated_minutes": 25,
-    },
-    {
-        "slug": "cbse-math-relations",
-        "course": "Class 12th Board Exam",
-        "subject": "Mathematics",
-        "module": "Relations & Functions",
-        "title": "Equivalence Relations",
-        "description": "Identify the trio of mathematical properties that constitute an equivalence relation.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "cbse-math-derivative",
-        "course": "Class 12th Board Exam",
-        "subject": "Mathematics",
-        "module": "Calculus",
-        "title": "Derivative of Composite Exponential",
-        "description": "Calculate first derivative of e^(sin x) with respect to variable x using chain rule.",
-        "difficulty": "medium",
-        "estimated_minutes": 20,
-    },
-
-    # B.Tech (Computer Science & Engineering)
-    {
-        "slug": "c-control-flow",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "C Programming",
-        "module": "Control Flow",
-        "title": "Check Even or Odd",
-        "description": "Write a C program using conditional statements.",
-        "difficulty": "easy",
-        "estimated_minutes": 15,
-    },
-    {
-        "slug": "c-loops",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "C Programming",
-        "module": "Loops",
-        "title": "Multiplication Table",
-        "description": "Print a number's multiplication table using a loop.",
-        "difficulty": "easy",
-        "estimated_minutes": 20,
-    },
-    {
-        "slug": "c-functions",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "C Programming",
-        "module": "Functions",
-        "title": "Prime Number Checker",
-        "description": "Create a function that checks whether a number is prime.",
-        "difficulty": "medium",
-        "estimated_minutes": 30,
-    },
-    {
-        "slug": "c-recursion",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "C Programming",
-        "module": "Recursion",
-        "title": "Recursive Factorial",
-        "description": "Calculate factorial using a recursive function.",
-        "difficulty": "medium",
-        "estimated_minutes": 30,
-    },
-    {
-        "slug": "c-arrays",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "C Programming",
-        "module": "Arrays",
-        "title": "Binary Search",
-        "description": "Implement binary search on a sorted array.",
-        "difficulty": "hard",
-        "estimated_minutes": 45,
-    },
-    {
-        "slug": "math-matrices",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Mathematics",
-        "module": "Matrices",
-        "title": "Matrix Operations",
-        "description": "Practice matrix addition and multiplication.",
-        "difficulty": "easy",
-        "estimated_minutes": 20,
-    },
-    {
-        "slug": "math-determinants",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Mathematics",
-        "module": "Determinants",
-        "title": "Calculate a Determinant",
-        "description": "Calculate the determinant of a square matrix.",
-        "difficulty": "easy",
-        "estimated_minutes": 20,
-    },
-    {
-        "slug": "math-eigenvalues",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Mathematics",
-        "module": "Eigenvalues",
-        "title": "Find Eigenvalues",
-        "description": "Find eigenvalues of a suitable square matrix.",
-        "difficulty": "medium",
-        "estimated_minutes": 30,
-    },
-    {
-        "slug": "math-gauss-seidel",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Mathematics",
-        "module": "Numerical Methods",
-        "title": "Gauss-Seidel Method",
-        "description": "Solve a suitable linear system iteratively.",
-        "difficulty": "hard",
-        "estimated_minutes": 45,
-    },
-    {
-        "slug": "physics-wave-particle",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Physics",
-        "module": "Quantum Mechanics",
-        "title": "Wave-Particle Duality",
-        "description": "Explain the wave-particle duality of matter.",
-        "difficulty": "easy",
-        "estimated_minutes": 20,
-    },
-    {
-        "slug": "physics-wavefunction",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Physics",
-        "module": "Wave Functions",
-        "title": "Probability Density",
-        "description": "Explain the physical interpretation of a wave function.",
-        "difficulty": "medium",
-        "estimated_minutes": 30,
-    },
-    {
-        "slug": "physics-schrodinger",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Physics",
-        "module": "Schrodinger Equation",
-        "title": "Schrodinger Equations",
-        "description": "Compare the time-dependent and time-independent equations.",
-        "difficulty": "medium",
-        "estimated_minutes": 30,
-    },
-    {
-        "slug": "physics-particle-box",
-        "course": "B.Tech (Computer Science & Engineering)",
-        "subject": "Engineering Physics",
-        "module": "Quantum Mechanics",
-        "title": "Particle in a Box",
-        "description": "Solve a basic one-dimensional particle-in-a-box problem.",
-        "difficulty": "hard",
-        "estimated_minutes": 45,
-    },
-]
+# Note: Static SYLLABUS_CHALLENGES removed. All daily challenges are dynamically generated by Groq AI.
 
 LEVEL_TITLES = {
     1: "Rookie",
@@ -525,94 +161,113 @@ BADGE_DEFINITIONS = {
     },
 }
 
-QUIZ_CORRECT_ANSWERS = {
-    # B.Tech / CSE
-    "c-control-flow": "n % 2 == 0",
-    "c-loops": "for loop",
-    "c-functions": "It has exactly two positive divisors",
-    "c-recursion": "To stop recursive calls",
-    "c-arrays": "Sorted",
-    "math-matrices": "Rows of A equal columns of B",
-    "math-determinants": "ad - bc",
-    "math-eigenvalues": "det(A - lambda*I) = 0",
-    "math-gauss-seidel": "Strictly diagonally dominant",
-    "physics-wave-particle": "lambda = h / p",
-    "physics-wavefunction": "Probability density",
-    "physics-schrodinger": "Energy conservation",
-    "physics-particle-box": "En proportional to n^2",
+class DailyChallengeSubmit(BaseModel):
+    selected_answer: str = Field(min_length=1, max_length=500)
 
-    # JEE (Main & Advanced)
-    "jee-phys-kinematics": "u^2 * sin(2*theta) / g",
-    "jee-phys-rotational": "(1/2) * M * R^2",
-    "jee-phys-thermo": "1 - (T2 / T1)",
-    "jee-chem-hybridization": "sp3d2 (Octahedral)",
-    "jee-chem-thermo": "Delta G < 0",
-    "jee-chem-organic": "Racemization with partial inversion",
-    "jee-math-calculus": "0 (Odd function property)",
-    "jee-math-matrices": "det(A) != 0",
-    "jee-math-conics": "y = m*x + a/m",
+class DailyChallengeGenerateRequest(BaseModel):
+    course: Optional[str] = None
+    force_refresh: bool = False
 
-    # NEET (UG Medical)
-    "neet-bio-cell": "Mitochondria",
-    "neet-bio-genetics": "9:3:3:1",
-    "neet-bio-cardiac": "Sinoatrial (SA) Node",
-    "neet-bio-photosynthesis": "PEP (Phosphoenolpyruvate)",
-    "neet-chem-biomolecules": "Peptide Linkage (-CONH-)",
-    "neet-chem-kinetics": "t_1/2 = 0.693 / k",
-    "neet-phys-optics": "sin(theta_c) = 1 / mu",
-    "neet-phys-circuits": "P / Q = R / S",
+def get_or_create_daily_challenges(
+    db: Session,
+    user: User,
+    course_override: Optional[str] = None,
+    force_refresh: bool = False,
+) -> tuple[DailyAIChallengeSet, list[AIGeneratedChallengeQuestion]]:
+    """
+    Retrieves today's AI-generated daily challenges for the user.
+    If today's challenge set does not exist for their course or force_refresh is requested,
+    it dynamically generates a curriculum-aligned 10-question set using Groq AI.
+    """
+    acad_prof = db.query(AcademicProfile).filter(AcademicProfile.user_id == user.id).first()
+    selected_course = (
+        course_override.strip()
+        if (course_override and course_override.strip().lower() != "all" and course_override.strip() != "All Courses")
+        else ((acad_prof.course if acad_prof and acad_prof.course else None) or user.course or "JEE (Main & Advanced)")
+    )
+    class_or_semester = (acad_prof.class_or_semester if acad_prof else None) or "Class 12"
+    branch = (acad_prof.branch if acad_prof else None) or "Computer Science & Engineering"
 
-    # Class 12th Board Exam
-    "cbse-phys-gauss": "q / epsilon_0",
-    "cbse-phys-drift": "v_d = (e * E * tau) / m",
-    "cbse-chem-boiling": "Delta T_b = K_b * m",
-    "cbse-chem-nernst": "E = E0 - (0.0591 / n) * log(Q)",
-    "cbse-math-relations": "Reflexive, Symmetric, and Transitive",
-    "cbse-math-derivative": "cos(x) * e^(sin x)",
-}
+    today_str = datetime.now(STUDY_TIMEZONE).strftime("%Y-%m-%d")
 
-def seed_learning_challenges():
-    db = SessionLocal()
-    try:
-        for item in SYLLABUS_CHALLENGES:
-            existing = (
-                db.query(LearningChallenge)
-                .filter(LearningChallenge.slug == item["slug"])
-                .first()
+    if not force_refresh:
+        existing_set = (
+            db.query(DailyAIChallengeSet)
+            .filter(
+                DailyAIChallengeSet.user_id == user.id,
+                DailyAIChallengeSet.generation_date == today_str,
+                DailyAIChallengeSet.course == selected_course,
+                DailyAIChallengeSet.generation_status == "completed",
             )
-            if existing:
-                existing.course = item.get("course", "B.Tech (Computer Science & Engineering)")
-                existing.subject = item["subject"]
-                existing.module = item["module"]
-                existing.title = item["title"]
-                existing.description = item["description"]
-                existing.difficulty = item["difficulty"]
-                existing.estimated_minutes = item["estimated_minutes"]
-                existing.xp_reward = XP_REWARDS.get(item["difficulty"], 10)
-                existing.is_active = True
-            else:
-                db.add(
-                    LearningChallenge(
-                        slug=item["slug"],
-                        course=item.get("course", "B.Tech (Computer Science & Engineering)"),
-                        subject=item["subject"],
-                        module=item["module"],
-                        title=item["title"],
-                        description=item["description"],
-                        difficulty=item["difficulty"],
-                        estimated_minutes=item["estimated_minutes"],
-                        xp_reward=XP_REWARDS.get(item["difficulty"], 10),
-                        is_active=True,
-                    )
-                )
-        db.commit()
-    except Exception as e:
-        print("Error seeding challenges:", e)
-        db.rollback()
-    finally:
-        db.close()
+            .first()
+        )
+        if existing_set:
+            questions = (
+                db.query(AIGeneratedChallengeQuestion)
+                .filter(AIGeneratedChallengeQuestion.challenge_set_id == existing_set.id)
+                .order_by(AIGeneratedChallengeQuestion.order_index, AIGeneratedChallengeQuestion.id)
+                .all()
+            )
+            if len(questions) >= 5:
+                return existing_set, questions
 
-seed_learning_challenges()
+    prior_fps = {
+        row[0]
+        for row in db.query(AIGeneratedChallengeQuestion.question_fingerprint)
+        .filter(AIGeneratedChallengeQuestion.user_id == user.id)
+        .all()
+        if row[0]
+    }
+
+    raw_questions = generate_daily_challenges_for_profile(
+        course=selected_course,
+        class_or_semester=class_or_semester,
+        branch=branch,
+        existing_fingerprints=prior_fps,
+        total_count=10,
+    )
+
+    new_set = DailyAIChallengeSet(
+        user_id=user.id,
+        course=selected_course,
+        class_or_semester=class_or_semester,
+        branch=branch,
+        generation_date=today_str,
+        generation_status="completed",
+        total_questions=len(raw_questions),
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(new_set)
+    db.flush()
+
+    saved_questions = []
+    for idx, q_data in enumerate(raw_questions):
+        q_obj = AIGeneratedChallengeQuestion(
+            challenge_set_id=new_set.id,
+            user_id=user.id,
+            course=selected_course,
+            subject=q_data["subject"],
+            topic=q_data.get("topic", ""),
+            difficulty=q_data.get("difficulty", "medium"),
+            title=q_data.get("title", f"Challenge {idx + 1}"),
+            question=q_data["question"],
+            options=json.dumps(q_data["options"]) if isinstance(q_data["options"], list) else str(q_data["options"]),
+            correct_answer=q_data["correct_answer"],
+            explanation=q_data.get("explanation", ""),
+            xp_reward=int(q_data.get("xp_reward", 20)),
+            question_fingerprint=q_data.get("question_fingerprint"),
+            order_index=idx,
+            created_at=datetime.now(timezone.utc),
+        )
+        db.add(q_obj)
+        saved_questions.append(q_obj)
+
+    db.commit()
+    db.refresh(new_set)
+    for q in saved_questions:
+        db.refresh(q)
+
+    return new_set, saved_questions
 
 def calculate_level(total_xp: int) -> dict:
     thresholds = [0, 100, 250, 450, 700, 1000, 1400]
@@ -717,35 +372,66 @@ def evaluate_badges(db: Session, user_id: int, profile: GamificationProfile) -> 
         if unlock_badge(db, user_id, "fourteen_day_streak"):
             newly_unlocked.append("fourteen_day_streak")
 
-    subject_badges = {
-        "C Programming": "code_ninja",
-        "Engineering Mathematics": "math_wizard",
-        "Engineering Physics": "quantum_master",
-    }
+    # Evaluate dynamic AI daily challenge completions
+    ai_completions = (
+        db.query(AIGeneratedChallengeQuestion.subject)
+        .join(
+            AIDailyChallengeCompletion,
+            AIDailyChallengeCompletion.question_id == AIGeneratedChallengeQuestion.id,
+        )
+        .filter(
+            AIDailyChallengeCompletion.user_id == user_id,
+            AIDailyChallengeCompletion.is_correct.is_(True),
+        )
+        .all()
+    )
+    subject_counts = {}
+    for (subj,) in ai_completions:
+        subject_counts[subj] = subject_counts.get(subj, 0) + 1
 
-    for subject_name, badge_key in subject_badges.items():
-        challenges = (
-            db.query(LearningChallenge)
-            .filter(
-                LearningChallenge.subject == subject_name,
-                LearningChallenge.is_active.is_(True),
-            )
-            .all()
+    # Also include legacy challenge completions if any exist
+    legacy_completions = (
+        db.query(LearningChallenge.subject)
+        .join(
+            ChallengeCompletion,
+            ChallengeCompletion.challenge_id == LearningChallenge.id,
         )
-        if not challenges:
-            continue
-        challenge_ids = [c.id for c in challenges]
-        completed_count = (
-            db.query(ChallengeCompletion)
-            .filter(
-                ChallengeCompletion.user_id == user_id,
-                ChallengeCompletion.challenge_id.in_(challenge_ids),
-            )
-            .count()
-        )
-        if completed_count == len(challenge_ids):
-            if unlock_badge(db, user_id, badge_key):
-                newly_unlocked.append(badge_key)
+        .filter(ChallengeCompletion.user_id == user_id)
+        .all()
+    )
+    for (subj,) in legacy_completions:
+        subject_counts[subj] = subject_counts.get(subj, 0) + 1
+
+    if subject_counts.get("Physics", 0) + subject_counts.get("Engineering Physics", 0) >= 3:
+        if unlock_badge(db, user_id, "quantum_master"):
+            newly_unlocked.append("quantum_master")
+
+    if subject_counts.get("Mathematics", 0) + subject_counts.get("Engineering Mathematics", 0) >= 3:
+        if unlock_badge(db, user_id, "math_wizard"):
+            newly_unlocked.append("math_wizard")
+
+    if subject_counts.get("Chemistry", 0) + subject_counts.get("Engineering Chemistry", 0) >= 3:
+        if unlock_badge(db, user_id, "chem_pro"):
+            newly_unlocked.append("chem_pro")
+
+    if (
+        subject_counts.get("C Programming", 0)
+        + subject_counts.get("Programming", 0)
+        + subject_counts.get("Computer Science", 0)
+        + subject_counts.get("Data Structures & Algorithms", 0)
+        >= 3
+    ):
+        if unlock_badge(db, user_id, "code_ninja"):
+            newly_unlocked.append("code_ninja")
+
+    if (
+        subject_counts.get("Biology", 0)
+        + subject_counts.get("Botany", 0)
+        + subject_counts.get("Zoology", 0)
+        >= 3
+    ):
+        if unlock_badge(db, user_id, "neet_ace"):
+            newly_unlocked.append("neet_ace")
 
     return newly_unlocked
 
@@ -1276,111 +962,184 @@ def get_gamification_profile(
         ],
     }
 
-@app.get("/api/gamification/challenges")
-def get_learning_challenges(
+@app.get("/api/gamification/daily-challenges")
+def get_daily_challenges(
     course: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    selected_course = (
-        course.strip()
-        if (course and course.strip().lower() != "all")
-        else (current_user.course or "JEE (Main & Advanced)")
-    )
-    query = db.query(LearningChallenge).filter(LearningChallenge.is_active.is_(True))
-    if not (course and course.strip().lower() == "all"):
-        query = query.filter(LearningChallenge.course == selected_course)
+    try:
+        challenge_set, questions = get_or_create_daily_challenges(
+            db=db,
+            user=current_user,
+            course_override=course,
+            force_refresh=False,
+        )
+    except Exception as e:
+        print(f"[DailyChallenges] Generation error: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Unable to generate AI daily challenges: {str(e)}",
+        )
 
-    challenges = query.order_by(LearningChallenge.subject, LearningChallenge.id).all()
-    completed_ids = {
-        row.challenge_id
-        for row in db.query(ChallengeCompletion)
-        .filter(ChallengeCompletion.user_id == current_user.id)
+    completions = (
+        db.query(AIDailyChallengeCompletion)
+        .filter(
+            AIDailyChallengeCompletion.user_id == current_user.id,
+            AIDailyChallengeCompletion.challenge_set_id == challenge_set.id,
+            AIDailyChallengeCompletion.is_correct.is_(True),
+        )
         .all()
-    }
-    return [
-        {
-            "id": challenge.id,
-            "slug": challenge.slug,
-            "course": challenge.course,
-            "subject": challenge.subject,
-            "module": challenge.module,
-            "title": challenge.title,
-            "description": challenge.description,
-            "difficulty": challenge.difficulty,
-            "xp_reward": challenge.xp_reward,
-            "estimated_minutes": challenge.estimated_minutes,
-            "completed": challenge.id in completed_ids,
-        }
-        for challenge in challenges
-    ]
+    )
+    completed_map = {c.question_id: c for c in completions}
 
-@app.post("/api/gamification/challenges/{challenge_id}/complete")
-def complete_gamification_challenge(
-    challenge_id: int,
-    submission: QuizSubmission,
+    serialized = []
+    for q in questions:
+        is_done = q.id in completed_map
+        raw_opts = q.options
+        if isinstance(raw_opts, str):
+            try:
+                parsed_opts = json.loads(raw_opts)
+            except Exception:
+                parsed_opts = [raw_opts]
+        else:
+            parsed_opts = raw_opts or []
+
+        serialized.append({
+            "id": q.id,
+            "slug": f"ai-daily-{q.id}",
+            "course": q.course,
+            "subject": q.subject,
+            "module": q.topic or q.subject,
+            "topic": q.topic,
+            "title": q.title,
+            "description": q.question,
+            "question": q.question,
+            "options": parsed_opts,
+            "difficulty": q.difficulty,
+            "xp_reward": q.xp_reward,
+            "completed": is_done,
+            # Security: Never leak correct answer or explanation before completion!
+            "explanation": q.explanation if is_done else None,
+            "submitted_answer": completed_map[q.id].submitted_answer if is_done else None,
+            "generation_date": challenge_set.generation_date,
+            "is_ai_generated": True,
+        })
+
+    return {
+        "generation_date": challenge_set.generation_date,
+        "course": challenge_set.course,
+        "total_challenges": len(serialized),
+        "completed_count": len(completed_map),
+        "challenges": serialized,
+    }
+
+@app.post("/api/gamification/daily-challenges/generate")
+def force_regenerate_daily_challenges(
+    req: DailyChallengeGenerateRequest = DailyChallengeGenerateRequest(),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    challenge = (
-        db.query(LearningChallenge)
-        .filter(
-            LearningChallenge.id == challenge_id,
-            LearningChallenge.is_active.is_(True),
+    try:
+        challenge_set, questions = get_or_create_daily_challenges(
+            db=db,
+            user=current_user,
+            course_override=req.course,
+            force_refresh=True,
         )
-        .first()
-    )
-    if challenge is None:
-        raise HTTPException(status_code=404, detail="Learning challenge not found")
-
-    correct_answer = QUIZ_CORRECT_ANSWERS.get(challenge.slug)
-    if correct_answer is None:
+    except Exception as e:
+        print(f"[DailyChallenges] Regenerate error: {e}")
         raise HTTPException(
-            status_code=422, detail="Quiz is not configured for this challenge yet."
+            status_code=503,
+            detail=f"Groq AI challenge generation failed: {str(e)}",
         )
 
-    if submission.selected_answer.strip().lower() != correct_answer.strip().lower():
-        raise HTTPException(status_code=400, detail="Incorrect answer. Try again!")
+    return {
+        "message": "Fresh AI daily challenges generated successfully!",
+        "generation_date": challenge_set.generation_date,
+        "course": challenge_set.course,
+        "total_questions": len(questions),
+    }
 
-    existing = (
-        db.query(ChallengeCompletion)
+@app.post("/api/gamification/daily-challenges/{question_id}/submit")
+def submit_daily_challenge_answer(
+    question_id: int,
+    submission: DailyChallengeSubmit,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    question = (
+        db.query(AIGeneratedChallengeQuestion)
         .filter(
-            ChallengeCompletion.user_id == current_user.id,
-            ChallengeCompletion.challenge_id == challenge_id,
+            AIGeneratedChallengeQuestion.id == question_id,
+            AIGeneratedChallengeQuestion.user_id == current_user.id,
         )
         .first()
     )
+    if not question:
+        raise HTTPException(status_code=404, detail="Challenge question not found")
+
     profile = get_or_create_gamification_profile(db, current_user.id)
 
+    # Check if already completed
+    existing = (
+        db.query(AIDailyChallengeCompletion)
+        .filter(
+            AIDailyChallengeCompletion.user_id == current_user.id,
+            AIDailyChallengeCompletion.question_id == question.id,
+            AIDailyChallengeCompletion.is_correct.is_(True),
+        )
+        .first()
+    )
     if existing:
         return {
             "message": "Challenge already completed",
             "already_completed": True,
+            "is_correct": True,
             "xp_awarded": 0,
+            "explanation": question.explanation,
+            "correct_answer": question.correct_answer,
             **calculate_level(profile.total_xp),
             "current_streak": profile.current_streak,
             "longest_streak": profile.longest_streak,
             "newly_unlocked_badges": [],
         }
 
-    db.add(
-        ChallengeCompletion(
-            user_id=current_user.id,
-            challenge_id=challenge_id,
-            xp_awarded=challenge.xp_reward,
+    user_choice = submission.selected_answer.strip()
+    expected = question.correct_answer.strip()
+
+    if user_choice.lower() != expected.lower():
+        raise HTTPException(
+            status_code=400,
+            detail="Incorrect answer. Review the concept and try again!",
         )
+
+    completion = AIDailyChallengeCompletion(
+        user_id=current_user.id,
+        question_id=question.id,
+        challenge_set_id=question.challenge_set_id,
+        submitted_answer=user_choice,
+        is_correct=True,
+        xp_awarded=question.xp_reward,
+        completed_at=datetime.now(timezone.utc),
     )
-    profile.total_xp += challenge.xp_reward
+    db.add(completion)
+
+    profile.total_xp += question.xp_reward
+    update_streak(db, profile, current_user.id)
     newly_unlocked = evaluate_badges(db, current_user.id, profile)
     db.commit()
     db.refresh(profile)
 
     return {
-        "message": "Challenge completed successfully!",
+        "message": "Correct! Challenge completed successfully!",
         "already_completed": False,
-        "challenge_id": challenge.id,
-        "challenge_title": challenge.title,
-        "xp_awarded": challenge.xp_reward,
+        "is_correct": True,
+        "challenge_id": question.id,
+        "challenge_title": question.title,
+        "xp_awarded": question.xp_reward,
+        "explanation": question.explanation,
+        "correct_answer": question.correct_answer,
         **calculate_level(profile.total_xp),
         "current_streak": profile.current_streak,
         "longest_streak": profile.longest_streak,
@@ -1388,6 +1147,76 @@ def complete_gamification_challenge(
             {"key": key, **BADGE_DEFINITIONS[key]} for key in newly_unlocked
         ],
     }
+
+@app.get("/api/gamification/daily-challenges/history")
+def get_daily_challenges_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    sets = (
+        db.query(DailyAIChallengeSet)
+        .filter(DailyAIChallengeSet.user_id == current_user.id)
+        .order_by(DailyAIChallengeSet.generation_date.desc())
+        .limit(14)
+        .all()
+    )
+    history = []
+    for s in sets:
+        comp_count = (
+            db.query(AIDailyChallengeCompletion)
+            .filter(
+                AIDailyChallengeCompletion.user_id == current_user.id,
+                AIDailyChallengeCompletion.challenge_set_id == s.id,
+                AIDailyChallengeCompletion.is_correct.is_(True),
+            )
+            .count()
+        )
+        history.append({
+            "set_id": s.id,
+            "date": s.generation_date,
+            "course": s.course,
+            "total_questions": s.total_questions,
+            "completed_questions": comp_count,
+        })
+    return history
+
+# -------------------------------------------------------------
+# BACKWARD COMPATIBILITY: Legacy /api/gamification/challenges
+# -------------------------------------------------------------
+@app.get("/api/gamification/challenges")
+def get_legacy_learning_challenges(
+    course: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    data = get_daily_challenges(course=course, current_user=current_user, db=db)
+    return data["challenges"]
+
+@app.post("/api/gamification/challenges/{challenge_id}/complete")
+def complete_legacy_gamification_challenge(
+    challenge_id: int,
+    submission: QuizSubmission,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    # Try solving as an AI question first
+    ai_q = (
+        db.query(AIGeneratedChallengeQuestion)
+        .filter(
+            AIGeneratedChallengeQuestion.id == challenge_id,
+            AIGeneratedChallengeQuestion.user_id == current_user.id,
+        )
+        .first()
+    )
+    if ai_q:
+        return submit_daily_challenge_answer(
+            question_id=challenge_id,
+            submission=DailyChallengeSubmit(selected_answer=submission.selected_answer),
+            current_user=current_user,
+            db=db,
+        )
+
+    raise HTTPException(status_code=404, detail="Challenge question not found")
 
 @app.get("/api/gamification/badges")
 def get_gamification_badges(

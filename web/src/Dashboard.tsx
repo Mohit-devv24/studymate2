@@ -7,200 +7,6 @@ import SiteFooter from "./components/SiteFooter";
 import { apiFetch } from "./api";
 import confetti from "canvas-confetti";
 
-const CHALLENGE_QUIZZES: Record<string, { question: string; options: string[] }> = {
-  // B.Tech / CSE
-  "c-control-flow": {
-    question: "Which condition tests if an integer 'n' is even in C?",
-    options: ["n % 2 == 0", "n / 2 == 0", "n & 2 == 1", "n % 2 != 0"],
-  },
-  "c-loops": {
-    question: "Which loop is best suited when the number of iterations is known beforehand?",
-    options: ["for loop", "while (1)", "do-while loop", "goto loop"],
-  },
-  "c-functions": {
-    question: "What is the defining condition for a prime number greater than 1?",
-    options: [
-      "It has exactly two positive divisors",
-      "It is divisible by any even number",
-      "It is always odd",
-      "It has no factors other than 0",
-    ],
-  },
-  "c-recursion": {
-    question: "What is the fundamental purpose of a base case in recursion?",
-    options: [
-      "To stop recursive calls",
-      "To allocate more memory",
-      "To execute loops faster",
-      "To double the input",
-    ],
-  },
-  "c-arrays": {
-    question: "What is the prerequisite condition for applying binary search?",
-    options: ["Sorted", "Reverse sorted only", "Unsorted", "Empty"],
-  },
-  "math-matrices": {
-    question: "When is matrix multiplication A x B defined?",
-    options: [
-      "Rows of A equal columns of B",
-      "Columns of A equal rows of B",
-      "Both must be identity",
-      "Both must have identical dimensions",
-    ],
-  },
-  "math-determinants": {
-    question: "What is the determinant of a 2x2 matrix [[a, b], [c, d]]?",
-    options: ["ad - bc", "ab - cd", "ac - bd", "a + d - (b + c)"],
-  },
-  "math-eigenvalues": {
-    question: "What characteristic equation is solved to find eigenvalues lambda of matrix A?",
-    options: [
-      "det(A - lambda*I) = 0",
-      "trace(A) = lambda",
-      "A * lambda = 0",
-      "det(A) + lambda = 0",
-    ],
-  },
-  "math-gauss-seidel": {
-    question: "What matrix property guarantees convergence for the Gauss-Seidel method?",
-    options: [
-      "Strictly diagonally dominant",
-      "Singular",
-      "Upper triangular only",
-      "Zero determinant",
-    ],
-  },
-  "physics-wave-particle": {
-    question: "What is the de Broglie wavelength formula for a particle of momentum p?",
-    options: ["lambda = h / p", "lambda = p / h", "lambda = h * p", "lambda = h * c"],
-  },
-  "physics-wavefunction": {
-    question: "According to Born's interpretation, what does |psi|^2 represent?",
-    options: [
-      "Probability density",
-      "Wave frequency",
-      "Total kinetic energy",
-      "Particle charge",
-    ],
-  },
-  "physics-schrodinger": {
-    question: "The time-independent Schrodinger equation expresses which fundamental principle?",
-    options: [
-      "Energy conservation",
-      "Mass conservation",
-      "Charge conservation",
-      "Wave attenuation",
-    ],
-  },
-  "physics-particle-box": {
-    question: "How do the energy levels of a 1D particle in a box scale with quantum number n?",
-    options: [
-      "En proportional to n^2",
-      "En proportional to n",
-      "En proportional to 1/n",
-      "En is constant",
-    ],
-  },
-
-  // JEE (Main & Advanced)
-  "jee-phys-kinematics": {
-    question: "What is the horizontal range of a projectile fired with speed u at angle theta?",
-    options: ["u^2 * sin(2*theta) / g", "u^2 * sin^2(theta) / (2*g)", "2 * u * sin(theta) / g", "u^2 / (2*g)"],
-  },
-  "jee-phys-rotational": {
-    question: "What is the moment of inertia of a solid cylinder of mass M and radius R about its longitudinal axis?",
-    options: ["(1/2) * M * R^2", "M * R^2", "(2/5) * M * R^2", "(1/12) * M * R^2"],
-  },
-  "jee-phys-thermo": {
-    question: "What is the theoretical maximum efficiency of a Carnot heat engine operating between source T1 and sink T2?",
-    options: ["1 - (T2 / T1)", "1 + (T2 / T1)", "T2 / T1", "(T1 - T2) / T2"],
-  },
-  "jee-chem-hybridization": {
-    question: "What is the hybridization and VSEPR geometry of Sulfur Hexafluoride (SF6)?",
-    options: ["sp3d2 (Octahedral)", "sp3d (Trigonal bipyramidal)", "sp3 (Tetrahedral)", "dsp2 (Square planar)"],
-  },
-  "jee-chem-thermo": {
-    question: "Under constant temperature and pressure, which condition guarantees a spontaneous process?",
-    options: ["Delta G < 0", "Delta H > 0", "Delta S < 0", "Delta G > 0"],
-  },
-  "jee-chem-organic": {
-    question: "What is the stereochemical outcome when a chiral substrate undergoes an SN1 substitution?",
-    options: ["Racemization with partial inversion", "100% Inversion (Walden inversion)", "100% Retention of configuration", "Complete dimerization"],
-  },
-  "jee-math-calculus": {
-    question: "What is the value of the definite integral of sin^5(x) from -pi/2 to pi/2?",
-    options: ["0 (Odd function property)", "1", "pi / 2", "2 / 5"],
-  },
-  "jee-math-matrices": {
-    question: "Which condition must the coefficient matrix A satisfy for a linear system AX = B to have a unique solution?",
-    options: ["det(A) != 0", "det(A) == 0", "trace(A) == 0", "rank(A) == 0"],
-  },
-  "jee-math-conics": {
-    question: "What is the standard equation of the tangent with slope m to the parabola y^2 = 4ax?",
-    options: ["y = m*x + a/m", "y = m*x - a*m^2", "y = m*x + a*m", "y = m*x - a/m"],
-  },
-
-  // NEET (UG Medical)
-  "neet-bio-cell": {
-    question: "Which organelle is responsible for generating cellular ATP via oxidative phosphorylation?",
-    options: ["Mitochondria", "Endoplasmic Reticulum", "Golgi Apparatus", "Lysosome"],
-  },
-  "neet-bio-genetics": {
-    question: "What is the standard phenotypic ratio in the F2 generation of a Mendelian dihybrid cross?",
-    options: ["9:3:3:1", "3:1", "1:2:1", "9:7"],
-  },
-  "neet-bio-cardiac": {
-    question: "Which structure acts as the primary intrinsic pacemaker of the human heart?",
-    options: ["Sinoatrial (SA) Node", "Atrioventricular (AV) Node", "Purkinje Fibres", "Bundle of His"],
-  },
-  "neet-bio-photosynthesis": {
-    question: "What is the initial acceptor molecule for CO2 in mesophyll cells of C4 plants?",
-    options: ["PEP (Phosphoenolpyruvate)", "RuBP (Ribulose 1,5-bisphosphate)", "OAA (Oxaloacetate)", "PGA (Phosphoglycerate)"],
-  },
-  "neet-chem-biomolecules": {
-    question: "Which covalent linkage binds consecutive amino acids in proteins?",
-    options: ["Peptide Linkage (-CONH-)", "Glycosidic bond", "Phosphodiester bond", "Ester bond"],
-  },
-  "neet-chem-kinetics": {
-    question: "What is the half-life equation for a first order chemical reaction?",
-    options: ["t_1/2 = 0.693 / k", "t_1/2 = [A]_0 / (2*k)", "t_1/2 = 1 / (k * [A]_0)", "t_1/2 = k / 0.693"],
-  },
-  "neet-phys-optics": {
-    question: "For total internal reflection from a medium of refractive index mu into air, what is the critical angle theta_c?",
-    options: ["sin(theta_c) = 1 / mu", "cos(theta_c) = 1 / mu", "tan(theta_c) = mu", "sin(theta_c) = mu"],
-  },
-  "neet-phys-circuits": {
-    question: "What is the bridge balance condition where zero current flows through the central galvanometer?",
-    options: ["P / Q = R / S", "P * Q = R * S", "P + Q = R + S", "P / R = S / Q"],
-  },
-
-  // Class 12th Board Exam
-  "cbse-phys-gauss": {
-    question: "According to Gauss's Law, what is the total electric flux through a closed surface enclosing charge q?",
-    options: ["q / epsilon_0", "q * epsilon_0", "4 * pi * q / epsilon_0", "zero"],
-  },
-  "cbse-phys-drift": {
-    question: "What is the expression for drift velocity of electrons in a conductor under electric field E?",
-    options: ["v_d = (e * E * tau) / m", "v_d = (e * tau) / (m * E)", "v_d = (m * E) / (e * tau)", "v_d = e * E * m * tau"],
-  },
-  "cbse-chem-boiling": {
-    question: "Which formula relates the boiling point elevation Delta T_b of a non-volatile solute to its molality m?",
-    options: ["Delta T_b = K_b * m", "Delta T_b = K_b / m", "Delta T_b = K_f * m", "Delta T_b = i * P_0"],
-  },
-  "cbse-chem-nernst": {
-    question: "What is the simplified Nernst equation for a cell reaction at 298 K?",
-    options: ["E = E0 - (0.0591 / n) * log(Q)", "E = E0 + (0.0591 / n) * log(Q)", "E = E0 - (R * T / n) * ln(Q)", "E = E0 * (0.0591 / n)"],
-  },
-  "cbse-math-relations": {
-    question: "Which three properties must a relation satisfy simultaneously to be an equivalence relation?",
-    options: ["Reflexive, Symmetric, and Transitive", "Reflexive, Anti-symmetric, and Transitive", "Symmetric, Identity, and Injective", "Bijective, Invertible, and Continuous"],
-  },
-  "cbse-math-derivative": {
-    question: "What is the derivative of e^(sin x) with respect to x?",
-    options: ["cos(x) * e^(sin x)", "-cos(x) * e^(sin x)", "sin(x) * e^(sin x)", "e^(cos x)"],
-  },
-};
-
 function Dashboard() {
   const userName = localStorage.getItem("userName") || "Student";
 
@@ -225,6 +31,11 @@ function Dashboard() {
   // Quiz modal
   const [activeQuizChallenge, setActiveQuizChallenge] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState("");
+  const [dailySetDate, setDailySetDate] = useState("");
+  const [generatingChallenges, setGeneratingChallenges] = useState(false);
+  const [quizExplanation, setQuizExplanation] = useState("");
+  const [quizCorrectAnswer, setQuizCorrectAnswer] = useState("");
+  const [quizIsCorrect, setQuizIsCorrect] = useState(null);
   const [quizSubmitting, setQuizSubmitting] = useState(false);
   const [quizFeedback, setQuizFeedback] = useState("");
 
@@ -251,7 +62,7 @@ function Dashboard() {
           apiFetch("/api/subjects"),
           apiFetch("/api/tasks"),
           apiFetch("/api/gamification/profile"),
-          apiFetch(`/api/gamification/challenges?course=${encodeURIComponent(userCourse)}`),
+          apiFetch(`/api/gamification/daily-challenges?course=${encodeURIComponent(userCourse)}`),
           apiFetch("/api/gamification/badges"),
           apiFetch("/api/study/goal"),
         ]);
@@ -265,8 +76,13 @@ function Dashboard() {
       if (profRes.ok && profRes.data) {
         setProfile(profRes.data);
       }
-      if (chalRes.ok && Array.isArray(chalRes.data)) {
-        setChallenges(chalRes.data);
+      if (chalRes.ok) {
+        if (chalRes.data?.challenges && Array.isArray(chalRes.data.challenges)) {
+          setChallenges(chalRes.data.challenges);
+          if (chalRes.data.generation_date) setDailySetDate(chalRes.data.generation_date);
+        } else if (Array.isArray(chalRes.data)) {
+          setChallenges(chalRes.data);
+        }
       }
       if (badgeRes.ok && Array.isArray(badgeRes.data)) {
         setBadges(badgeRes.data);
@@ -482,10 +298,15 @@ function Dashboard() {
         });
       }
       const chalRes = await apiFetch(
-        `/api/gamification/challenges${newCourse === "All Courses" ? "?course=all" : `?course=${encodeURIComponent(newCourse)}`}`
+        `/api/gamification/daily-challenges${newCourse === "All Courses" ? "?course=all" : `?course=${encodeURIComponent(newCourse)}`}`
       );
-      if (chalRes.ok && Array.isArray(chalRes.data)) {
-        setChallenges(chalRes.data);
+      if (chalRes.ok) {
+        if (chalRes.data?.challenges && Array.isArray(chalRes.data.challenges)) {
+          setChallenges(chalRes.data.challenges);
+          if (chalRes.data.generation_date) setDailySetDate(chalRes.data.generation_date);
+        } else if (Array.isArray(chalRes.data)) {
+          setChallenges(chalRes.data);
+        }
       }
     } catch (e) {
       console.error("Failed to switch course", e);
@@ -497,12 +318,54 @@ function Dashboard() {
     setActiveQuizChallenge(challenge);
     setSelectedAnswer("");
     setQuizFeedback("");
+    setQuizExplanation("");
+    setQuizCorrectAnswer("");
+    setQuizIsCorrect(null);
   };
 
   const handleCloseQuiz = () => {
     setActiveQuizChallenge(null);
     setSelectedAnswer("");
     setQuizFeedback("");
+    setQuizExplanation("");
+    setQuizCorrectAnswer("");
+    setQuizIsCorrect(null);
+  };
+
+  const handleRegenerateChallenges = async () => {
+    try {
+      setGeneratingChallenges(true);
+      setMessage("Groq AI is generating a fresh curriculum challenge set...");
+      const res = await apiFetch("/api/gamification/daily-challenges/generate", {
+        method: "POST",
+        body: JSON.stringify({
+          course: selectedCourse === "All Courses" ? undefined : selectedCourse,
+          force_refresh: true,
+        }),
+      });
+      if (res.ok) {
+        setMessage("✨ Fresh AI Daily Challenges generated!");
+        const userCourse = selectedCourse === "All Courses" ? "all" : selectedCourse;
+        const chalRes = await apiFetch(
+          `/api/gamification/daily-challenges?course=${encodeURIComponent(userCourse)}`
+        );
+        if (chalRes.ok) {
+          if (chalRes.data?.challenges && Array.isArray(chalRes.data.challenges)) {
+            setChallenges(chalRes.data.challenges);
+            if (chalRes.data.generation_date) setDailySetDate(chalRes.data.generation_date);
+          } else if (Array.isArray(chalRes.data)) {
+            setChallenges(chalRes.data);
+          }
+        }
+      } else {
+        setMessage(res.data?.detail || "Failed to generate new challenges.");
+      }
+    } catch (e) {
+      console.error(e);
+      setMessage("Failed to regenerate challenges. Please check connection.");
+    } finally {
+      setGeneratingChallenges(false);
+    }
   };
 
   const handleSubmitQuiz = async () => {
@@ -511,7 +374,7 @@ function Dashboard() {
       setQuizSubmitting(true);
       setQuizFeedback("");
       const res = await apiFetch(
-        `/api/gamification/challenges/${activeQuizChallenge.id}/complete`,
+        `/api/gamification/daily-challenges/${activeQuizChallenge.id}/submit`,
         {
           method: "POST",
           body: JSON.stringify({ selected_answer: selectedAnswer }),
@@ -519,19 +382,38 @@ function Dashboard() {
       );
 
       if (res.ok) {
+        setQuizIsCorrect(true);
+        if (res.data?.explanation) {
+          setQuizExplanation(res.data.explanation);
+        }
+        if (res.data?.correct_answer) {
+          setQuizCorrectAnswer(res.data.correct_answer);
+        }
         setMessage(`Challenge completed! +${activeQuizChallenge.xp_reward} XP! ✦`);
-        handleCloseQuiz();
+        try {
+          confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        } catch {
+          // ignore
+        }
         // Refresh challenges and profile
-        const chalUrl = `/api/gamification/challenges${selectedCourse === "All Courses" ? "?course=all" : `?course=${encodeURIComponent(selectedCourse)}`}`;
+        const userCourse = selectedCourse === "All Courses" ? "all" : selectedCourse;
         const [chalRes, profRes, badgeRes] = await Promise.all([
-          apiFetch(chalUrl),
+          apiFetch(`/api/gamification/daily-challenges?course=${encodeURIComponent(userCourse)}`),
           apiFetch("/api/gamification/profile"),
           apiFetch("/api/gamification/badges"),
         ]);
-        if (chalRes.ok) setChallenges(chalRes.data);
+        if (chalRes.ok) {
+          if (chalRes.data?.challenges && Array.isArray(chalRes.data.challenges)) {
+            setChallenges(chalRes.data.challenges);
+            if (chalRes.data.generation_date) setDailySetDate(chalRes.data.generation_date);
+          } else if (Array.isArray(chalRes.data)) {
+            setChallenges(chalRes.data);
+          }
+        }
         if (profRes.ok) setProfile(profRes.data);
         if (badgeRes.ok) setBadges(badgeRes.data);
       } else {
+        setQuizIsCorrect(false);
         setQuizFeedback(res.data?.detail || "Incorrect answer, try again!");
       }
     } catch {
@@ -903,11 +785,33 @@ function Dashboard() {
         <section className="game-section">
           <div className="game-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
             <div>
-              <p className="panel-kicker">SYLLABUS MASTERY</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <p className="panel-kicker" style={{ margin: 0 }}>SYLLABUS MASTERY</p>
+                <span style={{ fontSize: 11, background: "rgba(196, 122, 67, 0.12)", color: "var(--dash-accent)", padding: "2px 8px", borderRadius: 12, fontWeight: 700 }}>
+                  ✨ AI DAILY CHALLENGE SET
+                </span>
+                {dailySetDate && (
+                  <span style={{ fontSize: 11, color: "var(--dash-muted)", fontWeight: 600 }}>
+                    ({dailySetDate})
+                  </span>
+                )}
+              </div>
               <h2>Learning Challenges &amp; Quizzes</h2>
               <p>Test your knowledge on core concepts and earn XP toward level progression.</p>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className="dashboard-button ghost"
+                onClick={handleRegenerateChallenges}
+                disabled={generatingChallenges}
+                style={{ fontSize: 13, padding: "7px 12px", display: "flex", alignItems: "center", gap: 6 }}
+                title="Generate fresh AI curriculum challenges"
+              >
+                <span>{generatingChallenges ? "⏳" : "⚡"}</span>
+                {generatingChallenges ? "Generating AI Questions..." : "New Daily Set"}
+              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--dash-muted)" }}>Target Course:</span>
               <select
                 value={selectedCourse}
@@ -932,6 +836,7 @@ function Dashboard() {
               </select>
             </div>
           </div>
+        </div>
 
           <div className="game-filters" style={{ marginBottom: 18 }}>
             {["All", "Pending", "Completed"].map((filter) => (
@@ -963,7 +868,7 @@ function Dashboard() {
                   </div>
 
                   <h4>{challenge.title}</h4>
-                  <p className="game-challenge-description">{challenge.description}</p>
+                  <p className="game-challenge-description">{challenge.question || challenge.description}</p>
 
                   <div className="game-challenge-footer">
                     <span className="game-xp-reward">+{challenge.xp_reward} XP</span>
@@ -1040,26 +945,31 @@ function Dashboard() {
           <div
             className="quote-modal-card"
             onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: 540, padding: 32, background: "white", borderRadius: 24 }}
+            style={{ maxWidth: 560, padding: 32, background: "white", borderRadius: 24, boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span className="game-subject-tag">{activeQuizChallenge.subject}</span>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <span className="game-subject-tag">{activeQuizChallenge.subject}</span>
+                <span className={`game-difficulty ${String(activeQuizChallenge.difficulty || "easy").toLowerCase()}`}>
+                  {activeQuizChallenge.difficulty}
+                </span>
+                <span style={{ fontSize: 11, background: "rgba(196, 122, 67, 0.12)", color: "var(--dash-accent)", padding: "2px 6px", borderRadius: 8, fontWeight: 700 }}>
+                  AI Generated
+                </span>
+              </div>
               <span className="game-xp-reward">+{activeQuizChallenge.xp_reward} XP</span>
             </div>
 
-            <h3 style={{ margin: "0 0 12px", fontSize: 20 }}>{activeQuizChallenge.title}</h3>
-            <p style={{ color: "var(--dash-muted)", marginBottom: 20, fontSize: 14 }}>
-              {CHALLENGE_QUIZZES[activeQuizChallenge.slug]?.question ||
-                activeQuizChallenge.description}
+            <h3 style={{ margin: "0 0 10px", fontSize: 20 }}>{activeQuizChallenge.title}</h3>
+            <p style={{ color: "var(--dash-ink)", marginBottom: 20, fontSize: 15, lineHeight: 1.5, fontWeight: 500 }}>
+              {activeQuizChallenge.question || activeQuizChallenge.description}
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
               {(
-                CHALLENGE_QUIZZES[activeQuizChallenge.slug]?.options || [
-                  "Option A",
-                  "Option B",
-                  "Option C",
-                ]
+                activeQuizChallenge.options && activeQuizChallenge.options.length > 0
+                  ? activeQuizChallenge.options
+                  : ["Option A", "Option B", "Option C", "Option D"]
               ).map((option) => (
                 <label
                   key={option}
@@ -1071,14 +981,16 @@ function Dashboard() {
                     borderRadius: 12,
                     border: `1.5px solid ${selectedAnswer === option ? "var(--dash-accent)" : "var(--dash-line)"}`,
                     background: selectedAnswer === option ? "#f6f4f8" : "transparent",
-                    cursor: "pointer",
+                    cursor: quizIsCorrect ? "default" : "pointer",
                     fontSize: 14,
+                    transition: "all 0.15s ease",
                   }}
                 >
                   <input
                     type="radio"
                     name="quiz-answer"
                     value={option}
+                    disabled={quizSubmitting || quizIsCorrect}
                     checked={selectedAnswer === option}
                     onChange={() => setSelectedAnswer(option)}
                   />
@@ -1087,10 +999,37 @@ function Dashboard() {
               ))}
             </div>
 
-            {quizFeedback && (
-              <p style={{ color: "var(--dash-danger)", fontSize: 13, marginBottom: 16 }}>
+            {quizFeedback && !quizIsCorrect && (
+              <div style={{
+                background: "rgba(220, 38, 38, 0.08)",
+                border: "1px solid rgba(220, 38, 38, 0.25)",
+                borderRadius: 10,
+                padding: "10px 14px",
+                color: "var(--dash-danger)",
+                fontSize: 13,
+                marginBottom: 16
+              }}>
                 {quizFeedback}
-              </p>
+              </div>
+            )}
+
+            {quizIsCorrect && (
+              <div style={{
+                background: "rgba(16, 185, 129, 0.1)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                borderRadius: 12,
+                padding: "14px 16px",
+                marginBottom: 20
+              }}>
+                <div style={{ color: "var(--dash-green)", fontWeight: 700, fontSize: 15, marginBottom: 6 }}>
+                  ✓ Correct Answer! +{activeQuizChallenge.xp_reward} XP
+                </div>
+                {quizExplanation && (
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--dash-ink)", lineHeight: 1.5 }}>
+                    <strong>Explanation:</strong> {quizExplanation}
+                  </p>
+                )}
+              </div>
             )}
 
             <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
@@ -1100,16 +1039,18 @@ function Dashboard() {
                 onClick={handleCloseQuiz}
                 disabled={quizSubmitting}
               >
-                Cancel
+                {quizIsCorrect ? "Close" : "Cancel"}
               </button>
-              <button
-                type="button"
-                className="dashboard-button primary"
-                onClick={handleSubmitQuiz}
-                disabled={quizSubmitting || !selectedAnswer}
-              >
-                {quizSubmitting ? "Checking..." : "Submit Answer"}
-              </button>
+              {!quizIsCorrect && (
+                <button
+                  type="button"
+                  className="dashboard-button primary"
+                  onClick={handleSubmitQuiz}
+                  disabled={quizSubmitting || !selectedAnswer}
+                >
+                  {quizSubmitting ? "Checking..." : "Submit Answer"}
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -272,3 +272,57 @@ class GeneratedGameQuestion(Base):
     created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
 
+class DailyAIChallengeSet(Base):
+    __tablename__ = "daily_ai_challenge_sets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    course = Column(String(100), nullable=False, index=True)
+    class_or_semester = Column(String(50), nullable=True, default="")
+    branch = Column(String(100), nullable=True, default="")
+    generation_date = Column(String(10), nullable=False, index=True)  # YYYY-MM-DD
+    generation_status = Column(String(20), nullable=False, default="ready")
+    total_questions = Column(Integer, nullable=False, default=10)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    questions = relationship("AIGeneratedChallengeQuestion", back_populates="challenge_set", cascade="all, delete-orphan")
+
+
+class AIGeneratedChallengeQuestion(Base):
+    __tablename__ = "ai_generated_challenge_questions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    challenge_set_id = Column(Integer, ForeignKey("daily_ai_challenge_sets.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    course = Column(String(100), nullable=False)
+    subject = Column(String(100), nullable=False, index=True)
+    topic = Column(String(150), nullable=True, default="")
+    difficulty = Column(String(20), nullable=False, default="medium")
+    title = Column(String(255), nullable=False)
+    question = Column(Text, nullable=False)
+    options = Column(Text, nullable=False)  # JSON string array of 4 options
+    correct_answer = Column(Text, nullable=False)
+    explanation = Column(Text, nullable=False)
+    xp_reward = Column(Integer, nullable=False, default=10)
+    question_fingerprint = Column(String(64), nullable=False, index=True)
+    order_index = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    challenge_set = relationship("DailyAIChallengeSet", back_populates="questions")
+
+
+class AIDailyChallengeCompletion(Base):
+    __tablename__ = "ai_daily_challenge_completions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    question_id = Column(Integer, ForeignKey("ai_generated_challenge_questions.id", ondelete="CASCADE"), nullable=False, index=True)
+    challenge_set_id = Column(Integer, ForeignKey("daily_ai_challenge_sets.id", ondelete="CASCADE"), nullable=False, index=True)
+    submitted_answer = Column(Text, nullable=False)
+    is_correct = Column(Boolean, nullable=False, default=True)
+    xp_awarded = Column(Integer, nullable=False, default=0)
+    completed_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    __table_args__ = (UniqueConstraint("user_id", "question_id", name="uq_user_ai_question_completion"),)
+
+
