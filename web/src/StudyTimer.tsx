@@ -280,15 +280,29 @@ export default function StudyTimer() {
     };
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isFullscreen, exitFullscreen]);
+
+  // Synchronize document body class for true fullscreen lock
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.classList.add("studytimer-fullscreen-active");
+    } else {
+      document.body.classList.remove("studytimer-fullscreen-active");
+    }
+    return () => {
+      document.body.classList.remove("studytimer-fullscreen-active");
+    };
+  }, [isFullscreen]);
 
   // Active Timer Countdown Interval with High-Precision Tick Timing
   useEffect(() => {
@@ -435,22 +449,32 @@ export default function StudyTimer() {
     Math.max(0, Math.round(((initialDurationSeconds - remainingSeconds) / initialDurationSeconds) * 100))
   );
 
+  const currentBg = getWallpaperBackground();
   const bgStyle = {
-    "--timer-wallpaper": getWallpaperBackground(),
+    "--timer-wallpaper": currentBg,
+    background: currentBg,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundAttachment: "fixed",
   } as React.CSSProperties;
 
   return (
     <div
       ref={fullscreenContainerRef}
-      className={`dashboard timer-page ${timerRunning ? "timer-running" : ""} ${
-        isFullscreen ? "is-fullscreen" : ""
+      className={`timer-page ${isFullscreen ? "is-fullscreen timer-page-fullscreen" : "dashboard"} ${
+        timerRunning ? "timer-running" : ""
       }`}
       style={bgStyle}
     >
       {/* Sidebar hidden completely in fullscreen */}
       {!isFullscreen && <SidebarNav />}
 
-      <main className={`dashboard-main timer-main ${isFullscreen ? "fullscreen-mode-active" : ""}`}>
+      <main
+        className={`timer-main ${
+          isFullscreen ? "fullscreen-mode-active timer-main-fullscreen" : "dashboard-main"
+        }`}
+      >
         {/* FULLSCREEN IMMERSIVE TOP HEADER */}
         {isFullscreen ? (
           <header className="timer-fullscreen-topbar">
