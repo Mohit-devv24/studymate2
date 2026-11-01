@@ -29,6 +29,30 @@ export function logoutUser(): void {
   localStorage.removeItem("userEmail");
 }
 
+export function isTokenExpired(token?: string | null): boolean {
+  if (!token) return true;
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return true;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    const payload = JSON.parse(jsonPayload);
+    if (typeof payload.exp === "number") {
+      // 5-second buffer before absolute expiration
+      return payload.exp * 1000 <= Date.now() + 5000;
+    }
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 export interface ApiResponse<T = any> {
   ok: boolean;
   status: number;
@@ -65,8 +89,28 @@ export async function apiFetch<T = any>(path: string, options: RequestInit = {})
     ? await response.json()
     : await response.text();
 
-  if (response.status === 401 && token && !path.includes("/api/login")) {
+  if (response.status === 401 && !path.includes("/api/login")) {
     logoutUser();
+    if (typeof window !== "undefined") {
+      const currentPath =
+        window.location.pathname + window.location.search + window.location.hash;
+      const expiredMsg = "Your session has expired. Please log in again.";
+      try {
+        sessionStorage.setItem("studymate_auth_message", expiredMsg);
+        sessionStorage.setItem("studymate_auth_redirect", currentPath);
+      } catch {
+        // ignore
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("studymate-session-expired", {
+          detail: {
+            from: currentPath,
+            message: expiredMsg,
+          },
+        })
+      );
+    }
   }
 
   return {

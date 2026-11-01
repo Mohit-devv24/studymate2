@@ -1,6 +1,7 @@
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { isTokenExpired, logoutUser } from "./api";
 
 import Signup from "./Signup";
 
@@ -518,7 +519,7 @@ function Home() {
   );
 }
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children }: { children: any }) {
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
   const location = useLocation();
@@ -526,22 +527,66 @@ function ProtectedRoute({ children }) {
   if (!token || !userId) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+
+  if (isTokenExpired(token)) {
+    logoutUser();
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: location,
+          message: "Your session has expired. Please log in again.",
+        }}
+        replace
+      />
+    );
+  }
+
   return children;
 }
 
-function PublicRoute({ children }) {
+function PublicRoute({ children }: { children: any }) {
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
 
   if (token && userId) {
+    if (isTokenExpired(token)) {
+      logoutUser();
+      return children;
+    }
     return <Navigate to="/dashboard" replace />;
   }
   return children;
 }
 
+function AuthExpiredListener() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleExpired = (e: any) => {
+      const detail = e?.detail || {};
+      const from = detail.from || window.location.pathname + window.location.search;
+      const message = detail.message || "Your session has expired. Please log in again.";
+      navigate("/login", {
+        replace: true,
+        state: { from, message },
+      });
+    };
+
+    window.addEventListener("studymate-session-expired", handleExpired);
+    return () => {
+      window.removeEventListener("studymate-session-expired", handleExpired);
+    };
+  }, [navigate]);
+
+  return null;
+}
+
 function App() {
   return (
-    <Routes>
+    <>
+      <AuthExpiredListener />
+      <Routes>
       <Route path="/" element={<Home />} />
 
       <Route
@@ -672,6 +717,7 @@ function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }
 

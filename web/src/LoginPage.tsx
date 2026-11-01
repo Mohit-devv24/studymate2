@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "./api";
 import "./LoginPage.css";
@@ -10,8 +10,30 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState(location.state?.message || "");
+  const [message, setMessage] = useState(() => {
+    if (location.state?.message) return location.state.message;
+    try {
+      const sessionMsg = sessionStorage.getItem("studymate_auth_message");
+      if (sessionMsg) {
+        sessionStorage.removeItem("studymate_auth_message");
+        return sessionMsg;
+      }
+      const params = new URLSearchParams(location.search);
+      if (params.get("expired") === "true") {
+        return "Your session has expired. Please log in again.";
+      }
+    } catch {
+      // ignore
+    }
+    return "";
+  });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message);
+    }
+  }, [location.state?.message]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -32,7 +54,28 @@ export default function LoginPage() {
         return;
       }
 
-      const destination = location.state?.from?.pathname || "/dashboard";
+      let destination = "/dashboard";
+      try {
+        const sessionRedirect = sessionStorage.getItem("studymate_auth_redirect");
+        if (sessionRedirect && sessionRedirect.startsWith("/")) {
+          sessionStorage.removeItem("studymate_auth_redirect");
+          destination = sessionRedirect;
+        }
+      } catch {
+        // ignore
+      }
+
+      const fromState = location.state?.from;
+      if (typeof fromState === "string" && fromState.startsWith("/")) {
+        destination = fromState;
+      } else if (fromState?.pathname) {
+        destination = `${fromState.pathname}${fromState.search || ""}${fromState.hash || ""}`;
+      }
+
+      if (destination.startsWith("/login") || destination.startsWith("/signup")) {
+        destination = "/dashboard";
+      }
+
       navigate(destination, { replace: true });
     } catch (error) {
       console.error(error);
@@ -168,7 +211,7 @@ export default function LoginPage() {
 
             <p className="login-signup">
               New to StudyMate?
-              <Link to="/signup">Create an account</Link>
+              <Link to="/signup" state={{ from: location.state?.from }}>Create an account</Link>
             </p>
 
             <div className="login-card-footer">

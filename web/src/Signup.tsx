@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Signup.css";
 import { apiFetch } from "./api";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,7 +60,10 @@ export default function Signup() {
       localStorage.setItem("userCourse", course);
 
       navigate("/login", {
-        state: { message: "Account created successfully. Log in to continue." },
+        state: {
+          message: "Account created successfully. Log in to continue.",
+          from: location.state?.from,
+        },
       });
     } catch (error) {
       console.error(error);
@@ -266,7 +270,7 @@ export default function Signup() {
 
             <p className="signup-login">
               Already have an account?
-              <Link to="/login">Log in</Link>
+              <Link to="/login" state={{ from: location.state?.from }}>Log in</Link>
             </p>
 
             <div className="signup-card-footer">
