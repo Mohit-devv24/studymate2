@@ -28,6 +28,11 @@ function Dashboard() {
     localStorage.getItem("userCourse") || "JEE (Main & Advanced)"
   );
 
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardStanding, setLeaderboardStanding] = useState(null);
+  const [leaderboardCourseFilter, setLeaderboardCourseFilter] = useState("All");
+
   // Quiz modal
   const [activeQuizChallenge, setActiveQuizChallenge] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -57,7 +62,7 @@ function Dashboard() {
     try {
       setLoading(true);
       const userCourse = localStorage.getItem("userCourse") || "JEE (Main & Advanced)";
-      const [subsRes, tasksRes, profRes, chalRes, badgeRes, goalRes] =
+      const [subsRes, tasksRes, profRes, chalRes, badgeRes, goalRes, leadRes] =
         await Promise.all([
           apiFetch("/api/subjects"),
           apiFetch("/api/tasks"),
@@ -65,6 +70,7 @@ function Dashboard() {
           apiFetch(`/api/gamification/daily-challenges?course=${encodeURIComponent(userCourse)}`),
           apiFetch("/api/gamification/badges"),
           apiFetch("/api/study/goal"),
+          apiFetch("/api/leaderboard"),
         ]);
 
       if (subsRes.ok && Array.isArray(subsRes.data)) {
@@ -89,6 +95,10 @@ function Dashboard() {
       }
       if (goalRes.ok && goalRes.data) {
         setStudyGoal(goalRes.data);
+      }
+      if (leadRes.ok && leadRes.data) {
+        setLeaderboard(leadRes.data.leaderboard || []);
+        setLeaderboardStanding(leadRes.data.user_standing || null);
       }
     } catch (error) {
       console.error("Dashboard load error:", error);
@@ -920,6 +930,202 @@ function Dashboard() {
               </div>
             </article>
           )}
+
+          {/* COMMUNITY STUDY LEADERBOARD */}
+          <article className="game-panel" style={{ marginTop: 28 }}>
+            <div className="game-level-heading" style={{ flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <span className="game-muted-label" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <span>🏆</span> COMMUNITY STANDINGS
+                </span>
+                <h3 style={{ margin: "4px 0 0" }}>Live Student Leaderboard</h3>
+                <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "0.88rem" }}>
+                  Compare XP, current streaks, and ranking across all batches
+                </p>
+              </div>
+
+              {leaderboardStanding && (
+                <div
+                  style={{
+                    background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
+                    border: "1px solid #bfdbfe",
+                    borderRadius: 12,
+                    padding: "8px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
+                  <span style={{ fontSize: "1.2rem" }}>🎯</span>
+                  <div>
+                    <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1e40af", textTransform: "uppercase" }}>
+                      Your Standing
+                    </div>
+                    <div style={{ fontSize: "0.92rem", fontWeight: 800, color: "#1e3a8a" }}>
+                      Rank #{leaderboardStanding.rank} · {leaderboardStanding.total_xp} XP
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* LEADERBOARD TABLE */}
+            <div style={{ marginTop: 20, overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 6px" }}>
+                <thead>
+                  <tr style={{ color: "#64748b", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    <th style={{ textAlign: "center", padding: "8px 12px", width: 60 }}>Rank</th>
+                    <th style={{ textAlign: "left", padding: "8px 12px" }}>Student & Batch</th>
+                    <th style={{ textAlign: "center", padding: "8px 12px", width: 90 }}>Streak</th>
+                    <th style={{ textAlign: "center", padding: "8px 12px", width: 110 }}>Level</th>
+                    <th style={{ textAlign: "right", padding: "8px 16px", width: 110 }}>Total XP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: "center", padding: 32, color: "#94a3b8" }}>
+                        Loading student standings...
+                      </td>
+                    </tr>
+                  ) : (
+                    leaderboard.map((item) => {
+                      const isTop3 = item.rank <= 3;
+                      const rankBadge =
+                        item.rank === 1 ? "🥇 #1" : item.rank === 2 ? "🥈 #2" : item.rank === 3 ? "🥉 #3" : `#${item.rank}`;
+
+                      return (
+                        <tr
+                          key={item.user_id}
+                          style={{
+                            background: item.is_current_user
+                              ? "linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 100%)"
+                              : isTop3
+                              ? "#fafaf9"
+                              : "#ffffff",
+                            border: item.is_current_user
+                              ? "1.5px solid #10b981"
+                              : "1px solid #e2e8f0",
+                            borderRadius: 12,
+                            boxShadow: item.is_current_user
+                              ? "0 4px 12px rgba(16, 185, 129, 0.12)"
+                              : "0 1px 3px rgba(0,0,0,0.02)",
+                            transition: "transform 0.15s ease",
+                          }}
+                        >
+                          {/* RANK */}
+                          <td style={{ textAlign: "center", padding: "14px 12px", fontWeight: 800 }}>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                padding: "4px 8px",
+                                borderRadius: 8,
+                                fontSize: "0.84rem",
+                                background:
+                                  item.rank === 1
+                                    ? "#fef3c7"
+                                    : item.rank === 2
+                                    ? "#f1f5f9"
+                                    : item.rank === 3
+                                    ? "#ffedd5"
+                                    : "transparent",
+                                color:
+                                  item.rank === 1
+                                    ? "#92400e"
+                                    : item.rank === 2
+                                    ? "#475569"
+                                    : item.rank === 3
+                                    ? "#9a3412"
+                                    : "#64748b",
+                              }}
+                            >
+                              {rankBadge}
+                            </span>
+                          </td>
+
+                          {/* NAME & BATCH */}
+                          <td style={{ padding: "14px 12px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                              <span style={{ fontWeight: item.is_current_user ? 800 : 700, color: "#1e293b", fontSize: "0.95rem" }}>
+                                {item.name}
+                              </span>
+
+                              {item.is_current_user && (
+                                <span
+                                  style={{
+                                    fontSize: "0.68rem",
+                                    fontWeight: 800,
+                                    background: "#10b981",
+                                    color: "white",
+                                    padding: "2px 7px",
+                                    borderRadius: 999,
+                                    letterSpacing: "0.03em",
+                                  }}
+                                >
+                                  YOU
+                                </span>
+                              )}
+
+                              {/* BATCH / COURSE TAG */}
+                              <span
+                                style={{
+                                  fontSize: "0.75rem",
+                                  fontWeight: 600,
+                                  color: "#0369a1",
+                                  background: "#e0f2fe",
+                                  border: "1px solid #bae6fd",
+                                  padding: "2px 8px",
+                                  borderRadius: 6,
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 4,
+                                }}
+                              >
+                                <span style={{ fontSize: "0.7rem" }}>📚</span>
+                                {item.course}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* STREAK */}
+                          <td style={{ textAlign: "center", padding: "14px 12px", fontSize: "0.9rem", fontWeight: 700, color: "#475569" }}>
+                            {item.current_streak > 0 ? (
+                              <span style={{ color: "#ea580c" }}>🔥 {item.current_streak}d</span>
+                            ) : (
+                              <span style={{ color: "#94a3b8" }}>—</span>
+                            )}
+                          </td>
+
+                          {/* LEVEL */}
+                          <td style={{ textAlign: "center", padding: "14px 12px" }}>
+                            <span
+                              style={{
+                                fontSize: "0.76rem",
+                                fontWeight: 700,
+                                color: "#4338ca",
+                                background: "#e0e7ff",
+                                padding: "3px 8px",
+                                borderRadius: 6,
+                              }}
+                            >
+                              Lvl {item.level} · {item.title}
+                            </span>
+                          </td>
+
+                          {/* TOTAL XP */}
+                          <td style={{ textAlign: "right", padding: "14px 16px" }}>
+                            <span style={{ fontSize: "1.02rem", fontWeight: 800, color: "#0f172a" }}>
+                              ⚡ {item.total_xp.toLocaleString()}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </article>
         </section>
 
         {/* FEEDBACK TOAST */}

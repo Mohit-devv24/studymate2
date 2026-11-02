@@ -1040,6 +1040,79 @@ def get_gamification_profile(
         ],
     }
 
+
+@app.get("/api/leaderboard")
+def get_community_leaderboard(
+    course: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Retrieve real-time global and batch-level leaderboard.
+    Displays all active students ranked by total XP, showing their name,
+    course/branch, streak, level, and highlighting the current student.
+    """
+    from sqlalchemy import func
+
+    query = (
+        db.query(
+            User.id,
+            User.name,
+            User.course,
+            func.coalesce(GamificationProfile.total_xp, 0).label("total_xp"),
+            func.coalesce(GamificationProfile.current_streak, 0).label("current_streak"),
+            AcademicProfile.course_name,
+            AcademicProfile.branch_or_stream,
+        )
+        .outerjoin(GamificationProfile, User.id == GamificationProfile.user_id)
+        .outerjoin(AcademicProfile, User.id == AcademicProfile.user_id)
+    )
+
+    if course and course.strip().lower() not in ("all", "all courses", ""):
+        filter_term = f"%{course.strip()}%"
+        query = query.filter(
+            (User.course.ilike(filter_term)) | (AcademicProfile.course_name.ilike(filter_term))
+        )
+
+    rows = query.order_by(
+        func.coalesce(GamificationProfile.total_xp, 0).desc(),
+        User.id.asc()
+    ).all()
+
+    leaderboard = []
+    user_standing = None
+
+    for rank_idx, r in enumerate(rows, start=1):
+        # Student's permanent registered course always takes precedence on leaderboard
+        # Even if a JEE student plays a 10th-grade or other game for practice, their registered course remains intact
+        course_display = r.course or r.course_name or "General Studies"
+        if r.branch_or_stream and r.branch_or_stream.strip():
+            course_display = f"{course_display} ({r.branch_or_stream.strip()})"
+
+        lvl_info = calculate_level(r.total_xp)
+        is_me = (r.id == current_user.id)
+
+        entry = {
+            "rank": rank_idx,
+            "user_id": r.id,
+            "name": r.name or "Anonymous Student",
+            "course": course_display,
+            "total_xp": r.total_xp,
+            "level": lvl_info["level"],
+            "title": lvl_info["title"],
+            "current_streak": r.current_streak,
+            "is_current_user": is_me,
+        }
+        leaderboard.append(entry)
+        if is_me:
+            user_standing = entry
+
+    return {
+        "total_students": len(leaderboard),
+        "user_standing": user_standing,
+        "leaderboard": leaderboard,
+    }
+
 @app.get("/api/gamification/daily-challenges")
 def get_daily_challenges(
     course: Optional[str] = None,
@@ -1871,8 +1944,9 @@ def api_update_academic_profile(
     profile.selected_topic = data.selected_topic or ""
     profile.updated_at = datetime.now(timezone.utc)
 
-    # Sync User table's course field for system-wide consistency
-    current_user.course = data.course_name
+    # Preserve student's permanent registered course (do not overwrite if already set)
+    if not current_user.course:
+        current_user.course = data.course_name
 
     db.commit()
 
@@ -2071,6 +2145,13 @@ def api_submit_game(
         earned_new_badge = "Grandmaster"
 
     profile.badges = json.dumps(current_badges)
+
+    # Sync with student's unified GamificationProfile so game XP boosts total XP & leaderboard standing
+    main_gamification_profile = get_or_create_gamification_profile(db, current_user.id)
+    main_gamification_profile.total_xp += xp_earned
+    update_streak(db, main_gamification_profile, current_user.id)
+    evaluate_badges(db, current_user.id, main_gamification_profile)
+
     db.commit()
 
     return {

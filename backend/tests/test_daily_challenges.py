@@ -293,6 +293,62 @@ class TestDailyChallengeGenerator(unittest.TestCase):
             b_session.close()
             backup_engine.dispose()
 
+    def test_09_community_leaderboard_ranking_and_security(self):
+        """Scenario 9: Validate community leaderboard ranking, course display, and privacy."""
+        # Seed an additional user with higher XP
+        top_user = User(
+            id=99,
+            name="Top Achiever",
+            email="topper@studymate.test",
+            password="secret_password_hash",
+            course="NEET (UG Medical)",
+        )
+        self.db.add(top_user)
+        self.db.flush()
+
+        from models import GamificationProfile
+        top_profile = GamificationProfile(
+            user_id=top_user.id,
+            total_xp=500,
+            current_streak=10,
+        )
+        user_profile = GamificationProfile(
+            user_id=self.user.id,
+            total_xp=150,
+            current_streak=3,
+        )
+        self.db.add_all([top_profile, user_profile])
+        self.db.commit()
+
+        # Query leaderboard from current user's perspective
+        res = main.get_community_leaderboard(course=None, current_user=self.user, db=self.db)
+
+        self.assertIn("total_students", res)
+        self.assertIn("leaderboard", res)
+        self.assertIn("user_standing", res)
+        self.assertGreaterEqual(res["total_students"], 2)
+
+        # First place should be Top Achiever
+        first_place = res["leaderboard"][0]
+        self.assertEqual(first_place["user_id"], 99)
+        self.assertEqual(first_place["name"], "Top Achiever")
+        self.assertEqual(first_place["course"], "NEET (UG Medical)")
+        self.assertEqual(first_place["total_xp"], 500)
+        self.assertEqual(first_place["rank"], 1)
+        self.assertFalse(first_place["is_current_user"])
+
+        # User's standing check
+        my_standing = res["user_standing"]
+        self.assertIsNotNone(my_standing)
+        self.assertEqual(my_standing["user_id"], self.user.id)
+        self.assertEqual(my_standing["rank"], 2)
+        self.assertTrue(my_standing["is_current_user"])
+
+        # Security check: password hashes and emails MUST NOT be exposed in leaderboard entries
+        for entry in res["leaderboard"]:
+            self.assertNotIn("password", entry)
+            self.assertNotIn("email", entry)
+
 
 if __name__ == "__main__":
     unittest.main()
