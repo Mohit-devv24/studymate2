@@ -720,6 +720,20 @@ def login(user: LoginData, db: Session = Depends(get_db)):
         "course": existing_user.course or "JEE (Main & Advanced)",
     }
 
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+    new_password: str = Field(min_length=6)
+
+@app.post("/api/auth/reset-password")
+def reset_password(data: PasswordResetRequest, db: Session = Depends(get_db)):
+    normalized_email = data.email.strip().lower()
+    user = db.query(User).filter(User.email == normalized_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.password = password_hash.hash(data.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}
+
 # =========================================================
 # SUBJECTS
 # =========================================================
@@ -753,6 +767,23 @@ def get_subjects(
         .order_by(Subject.id.desc())
         .all()
     )
+    if not subjects:
+        # Auto-provision standard curriculum subjects for the user's course
+        course_name = current_user.course or "JEE (Main & Advanced)"
+        from academic_data import resolve_subjects
+        default_subjs = resolve_subjects("competitive", course_name)
+        if not default_subjs:
+            default_subjs = ["Physics", "Chemistry", "Mathematics"]
+        created = []
+        for s_name in default_subjs:
+            s_obj = Subject(name=s_name, user_id=current_user.id)
+            db.add(s_obj)
+            created.append(s_obj)
+        db.commit()
+        for s in created:
+            db.refresh(s)
+        subjects = created
+
     return [{"id": item.id, "name": item.name} for item in subjects]
 
 @app.put("/api/subjects/{subject_id}")
