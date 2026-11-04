@@ -84,7 +84,7 @@ configured_origins = [
     origin.strip()
     for origin in os.getenv(
         "CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:3000,http://127.0.0.1:3000,https://studymate-app.embarko.app",
     ).split(",")
     if origin.strip()
 ]
@@ -92,7 +92,7 @@ configured_origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=configured_origins,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|https://.*\.netlify\.app$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|https://.*\.netlify\.app$|https://.*\.embarko\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
